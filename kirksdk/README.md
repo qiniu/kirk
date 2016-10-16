@@ -1,4 +1,4 @@
-Golang SDK
+KIRK Golang SDK
 ===============
 [![GoDoc](https://godoc.org/qiniupkg.com/kirk/kirksdk?status.svg)](https://godoc.org/qiniupkg.com/kirk/kirksdk)
 
