@@ -1,6 +1,7 @@
+[![Qiniu Logo](http://open.qiniudn.com/logo.png)](http://qiniu.com/)
+
 QINIU KIRK
 ===============
-[![Qiniu Logo](http://open.qiniudn.com/logo.png)](http://qiniu.com/)
 [![GoDoc](https://godoc.org/qiniupkg.com/kirk?status.svg)](https://godoc.org/qiniupkg.com/kirk)
 
 文档

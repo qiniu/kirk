@@ -1,5 +1,6 @@
 /*
 包 qiniupkg.com/kirk/kirksdk 提供了在开发者业务服务器（服务端或客户端）管理七牛容器云资源的能力。
+
 首先，开发者需要配置七牛云账户的 AccessKey/SecretKey（在 https://portal.qiniu.com/ 中可以查看）。
 
   import (
