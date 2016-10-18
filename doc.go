@@ -3,9 +3,7 @@
 
 例如：
 
-```go
-import "qiniupkg.com/kirk/kirsdk"
-```
+	import "qiniupkg.com/kirk/kirsdk"
 
 和七牛云其他产品相同，管理容器云资源需要密钥 AccessKey/SecretKey，请注意保证账号密钥的安全。
 */
