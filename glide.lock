@@ -1,0 +1,38 @@
+hash: 0031ae295ece696d0b034df4c26138ce90585ac49ca1cdfb860caf827246940d
+updated: 2016-10-25T11:01:57.677129088+08:00
+imports:
+- name: github.com/Sirupsen/logrus
+  version: 4b6ea7319e214d98c938f12692336f7ca9348d6b
+- name: golang.org/x/net
+  version: f4b625ec9b21d620bb5ce57f2dfc3e08ca97fce6
+  subpackages:
+  - context
+- name: golang.org/x/sys
+  version: 8d1157a435470616f975ff9bb013bea8d0962067
+  subpackages:
+  - unix
+- name: qiniupkg.com/api.v7
+  version: e4122ada30952518d4745bb9f8dd87bef65a498f
+  subpackages:
+  - conf
+- name: qiniupkg.com/x
+  version: 946c4a16076d6d98aeb78619e2bd4012357f7228
+  subpackages:
+  - bytes.v7
+  - bytes.v7/seekable
+  - ctype.v7
+  - reqid.v7
+  - rpc.v7
+testImports:
+- name: github.com/davecgh/go-spew
+  version: 6d212800a42e8ab5c146b8ace3490ee17e5225f9
+  subpackages:
+  - spew
+- name: github.com/pmezard/go-difflib
+  version: d8ed2627bdf02c080bf22230dbb337003b7aba2d
+  subpackages:
+  - difflib
+- name: github.com/stretchr/testify
+  version: 69483b4bd14f5845b5a1e55bca19e954e827f1d0
+  subpackages:
+  - assert

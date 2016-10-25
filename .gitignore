@@ -22,3 +22,12 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# external packages folder
+vendor/
+
+# ds_store files
+.DS_Store

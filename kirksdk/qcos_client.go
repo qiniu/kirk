@@ -17,7 +17,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"golang.org/x/net/context"
-	"qiniu.com/qcos/kirksdk/mac"
+	"qiniupkg.com/kirk/kirksdk/mac"
 	"qiniupkg.com/x/rpc.v7"
 )
 
