@@ -3,7 +3,6 @@
 QINIU KIRK
 ===============
 [![GoDoc](https://godoc.org/qiniupkg.com/kirk?status.svg)](https://godoc.org/qiniupkg.com/kirk)
-
 [![Go Report Card](https://goreportcard.com/badge/github.com/qiniu/kirk)]
 (https://goreportcard.com/report/github.com/qiniu/kirk)
  
