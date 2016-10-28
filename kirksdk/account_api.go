@@ -14,8 +14,8 @@ const (
 )
 
 const (
-	DefaultAppHost   = "https://app-api.qiniu.com"
-	DefaultIndexHost = "https://index.qiniu.com"
+	DefaultAccountHost = "https://app-api.qiniu.com"
+	DefaultIndexHost   = "https://index.qiniu.com"
 )
 
 const (
@@ -24,47 +24,51 @@ const (
 	ProductQcosGates    = "qcos_gates"
 )
 
-type AppClient interface {
-	GetAppInfo(ctx context.Context) (ret AppInfo, err error)
-	CreateApp(ctx context.Context, appName string, args CreateAppArgs) (ret CreateAppRet, err error)
+type AccountClient interface {
+	GetAccountInfo(ctx context.Context) (ret AccountInfo, err error)
+
+	CreateApp(ctx context.Context, appName string, args CreateAppArgs) (ret AppInfo, err error)
 	DeleteApp(ctx context.Context, appURI string) (err error)
-	ListSubApps(ctx context.Context) (ret []AppInfo, err error)
-	ListManagedApps(ctx context.Context) (ret []AppInfo, err error)
+	GetApp(ctx context.Context, appName string) (ret AppInfo, err error)
 	GetAppKeys(ctx context.Context, appURI string) (ret []KeyPair, err error)
+	ListApps(ctx context.Context) (ret []AppInfo, err error)
+	ListManagedApps(ctx context.Context) (ret []AppInfo, err error)
 
 	GetRegion(ctx context.Context, regionName string) (ret RegionInfo, err error)
 	ListRegions(ctx context.Context) (ret []RegionInfo, err error)
 
-	ListAlertMethods(ctx context.Context) (ret []AlertMethodInfo, err error)
-	GetAlertMethod(ctx context.Context, id string) (ret AlertMethodInfo, err error)
-	CreateAlertMethod(ctx context.Context, args CreateAlertMethodArgs) (ret AlertMethodInfo, err error)
-	UpdateAlertMethod(ctx context.Context, id string, args UpdateAlertMethodArgs) (ret AlertMethodInfo, err error)
-	DeleteAlertMethod(ctx context.Context, id string) (err error)
+	CreateAlertMethod(ctx context.Context, appURI string, args CreateAlertMethodArgs) (ret AlertMethodInfo, err error)
+	DeleteAlertMethod(ctx context.Context, appURI string, id string) (err error)
+	GetAlertMethod(ctx context.Context, appURI string, id string) (ret AlertMethodInfo, err error)
+	ListAlertMethod(ctx context.Context, appURI string) (ret []AlertMethodInfo, err error)
+	UpdateAlertMethod(ctx context.Context, appURI string, id string, args UpdateAlertMethodArgs) (ret AlertMethodInfo, err error)
 
-	GetIndexClient(ctx context.Context) (IndexClient, error)
-	GetQcosClient(ctx context.Context, appURI string) (QcosClient, error)
+	GetIndexClient(ctx context.Context) (client IndexClient, err error)
+	GetQcosClient(ctx context.Context, appURI string) (client QcosClient, err error)
 }
 
-type AppConfig struct {
+type AccountConfig struct {
 	AccessKey string `json:"ak"`
 	SecretKey string `json:"sk"`
 	Host      string `json:"appd_host"`
-	Logger    *logrus.Logger
 	UserAgent string
+	Logger    *logrus.Logger
 	Transport http.RoundTripper
 }
 
 type CreateAppArgs struct {
-	Title   string            `json:"title"`
-	SpecURI string            `json:"specUri"`
-	SpecVer uint32            `json:"specVer"`
-	Region  string            `json:"region"`
-	Vars    map[string]string `json:"vars"`
-	Links   []string          `json:"links"`
+	Title   string `json:"title"`
+	Region  string `json:"region"`
+	SpecURI string `json:"specUri"`
+	SpecVer uint32 `json:"specVer"`
 }
 
-type CreateAppRet struct {
-	AppURI string `json:"appUri"`
+type AccountInfo struct {
+	ID               uint32    `json:"id"`
+	Name             string    `json:"uri"`
+	Title            string    `json:"title"`
+	CreationTime     time.Time `json:"ctime"`
+	ModificationTime time.Time `json:"mtime"`
 }
 
 type AppInfo struct {
@@ -72,21 +76,19 @@ type AppInfo struct {
 	URI              string    `json:"uri"`
 	Region           string    `json:"region"`
 	Title            string    `json:"title"`
+	Account          string    `json:"parentUri,omitempty"`
 	Status           string    `json:"status"`
 	RunMode          string    `json:"runMode,omitempty"`
-	ParentURI        string    `json:"parentUri,omitempty"`
 	CreationTime     time.Time `json:"ctime"`
 	ModificationTime time.Time `json:"mtime"`
 	AppExtendedInfo
 }
 
 type AppExtendedInfo struct {
-	VendorURI string                 `json:"vendorUri,omitempty"`
-	SpecURI   string                 `json:"specUri,omitempty"`
-	SpecVer   uint32                 `json:"specVer,omitempty"`
-	SetupMode string                 `json:"setupMode,omitempty"`
-	Metadata  map[string]interface{} `json:"metadata,omitempty"`
-	Vars      map[string]string      `json:"vars,omitempty"`
+	VendorURI string `json:"vendorUri,omitempty"`
+	SpecURI   string `json:"specUri,omitempty"`
+	SpecVer   uint32 `json:"specVer,omitempty"`
+	SetupMode string `json:"setupMode,omitempty"`
 }
 
 /*
