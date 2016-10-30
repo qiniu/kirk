@@ -8,17 +8,17 @@
     "qiniupkg.com/kirk/kirksdk"
   )
 
-  cfg := kirksdk.AppConfig{
+  cfg := kirksdk.AccountConfig{
     AccessKey: "UserAccountAccessKey",
     SecretKey: "UserAccountSecretKey",
-    Host: kirksdk.DefaultAppHost
+    Host:      kirksdk.DefaultAccountHost
   }
 
-  appClient := kirksdk.NewAppClient(cfg)
-  indexClient, err := appClient.GetIndexClient(context.TODO())
-  subAppClient, err := appClient.GetSubAppClient(context.TODO(), "kirk-test.new-app")
+  accountClient := kirksdk.NewAccountClient(cfg)
+  indexClient, err := accountClient.GetIndexClient(context.TODO())
+  qcosClient, err := accountClient.GetQcosClient(context.TODO(), "kirk-test.new-app")
 
-在构建了 appClient/indexClient/subAppClient 后，开发者可通过 client 调用账号、镜像空间以及各区域应用下容器、网络资源管理接口。
+在构建了 accountClient/indexClient/qcosClient 后，开发者可通过 client 调用账号、镜像空间以及各区域应用下容器、网络资源管理接口。
 前往 http://kirk-docs.qiniu.com/apidocs/?go 可以查看更多 API 和 SDK 文档。
 */
 package kirksdk
