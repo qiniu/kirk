@@ -793,7 +793,7 @@ func (p *qcosClientImp) SearchContainerLogs(ctx context.Context, args SearchCont
 		return
 	}
 
-	queryURL := fmt.Sprintf("%s/v3/logs/searchv2/%s", p.host, args.RepoType)
+	queryURL := fmt.Sprintf("%s/v3/logs/search/%s", p.host, args.RepoType)
 	params := make([]string, 0)
 	if args.Query != "" {
 		params = append(params, fmt.Sprintf("q=%s", url.QueryEscape(args.Query)))
