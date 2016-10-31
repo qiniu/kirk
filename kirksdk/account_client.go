@@ -353,7 +353,7 @@ func (p *accountClientImp) GetQcosClient(ctx context.Context, appURI string) (cl
 			return
 		}
 
-		endpoint, ok := regionInfo.Products[ProductQcos]
+		endpoint, ok := regionInfo.Products[ProductAPI]
 		if !ok {
 			result.err = fmt.Errorf("Fail to find qcos endpoint of app \"%s\"", appURI)
 		} else {

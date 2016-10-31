@@ -25,9 +25,9 @@ const (
 )
 
 const (
-	ProductQcos         = "qcos"
-	ProductQcosVpnProxy = "qcos_vpnproxy"
-	ProductQcosGates    = "qcos_gates"
+	ProductAPI      = "api"
+	ProductVpnProxy = "vpnproxy"
+	ProductGates    = "gates"
 )
 
 // AccountClient 包含针对账号 REST API 的各项操作
