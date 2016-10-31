@@ -1,0 +1,22 @@
+language: go
+
+go:
+  - 1.7
+
+env:
+  - PROJECT_ROOT=$HOME/gopath/src/qiniupkg.com
+
+before_install:
+  - mkdir -p $PROJECT_ROOT
+  - cp -vr $TRAVIS_BUILD_DIR $PROJECT_ROOT
+  - cd $PROJECT_ROOT
+
+install:
+  - go get -v github.com/Masterminds/glide
+  - cd $GOPATH/src/github.com/Masterminds/glide && git checkout 84607742b10f492430762d038e954236bbaf23f7 && go install
+  - cd $PROJECT_ROOT/kirk
+  - glide install
+
+script:
+  - make style
+  - make test

@@ -7,7 +7,7 @@
 本 SDK 基于 golang 语言， 用于与 QINIU KIRK 通用计算平台 REST API 的编程交互，提供了在开发者业务服务器（服务端或客户端）管理七牛容器云资源的能力。
 
 # 安装
-> 本 SDK 需要 [go 1.6](https://golang.org/dl/) 以上版本
+> 本 SDK 需要 [go 1.7](https://golang.org/dl/) 以上版本
 
 ## 使用 go get 安装
 ```
