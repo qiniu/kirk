@@ -374,6 +374,7 @@ type ServiceSpec struct {
 	StopGraceSec  int                `json:"stopGraceSec,omitempty"`
 	WorkDir       string             `json:"workDir,omitempty"`
 	UnitType      string             `json:"unitType,omitempty"`
+	GpuUUIDs      []string           `json:"gpuUUIDs,omitempty"` // do not use. prepare for gpu service
 }
 
 type LogCollectorSpec struct {
@@ -439,6 +440,7 @@ type ContainerInfo struct {
 	Stack      string                     `json:"stack"`
 	Status     Status                     `json:"status"`
 	Volumes    map[string]VolumeUsageInfo `json:"volumes,omitempty"`
+	GpuUUIDs   []string                   `json:"gpuUUIDs,omitempty"`
 	CreatedAt  time.Time                  `json:"createdAt"`
 	StartedAt  time.Time                  `json:"startedAt"`
 	FinishedAt time.Time                  `json:"finishedAt"`
