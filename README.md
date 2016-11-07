@@ -1,7 +1,10 @@
+# QINIU KIRK
 [![Qiniu Logo](http://open.qiniudn.com/logo.png)](http://qiniu.com/)
 
-# QINIU KIRK
-[![GoDoc](https://godoc.org/qiniupkg.com/kirk?status.svg)](https://godoc.org/qiniupkg.com/kirk)
+| branch | usage | status |
+| --- | --- | --- |
+| master | (default) stable version| [![Build Status](https://travis-ci.org/qiniu/kirk.svg?branch=master)](https://travis-ci.org/qiniu/kirk) [![GoDoc](https://godoc.org/qiniupkg.com/kirk?status.svg)](https://godoc.org/qiniupkg.com/kirk) |
+| develop | develop version | [![Build Status](https://travis-ci.org/qiniu/kirk.svg?branch=develop)](https://travis-ci.org/qiniu/kirk) |
 
 # 简介
 本 SDK 基于 golang 语言， 用于与 QINIU KIRK 通用计算平台 REST API 的编程交互，提供了在开发者业务服务器（服务端或客户端）管理七牛容器云资源的能力。
