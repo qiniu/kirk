@@ -335,6 +335,8 @@ type ServiceInfo struct {
 	Status            Status            `json:"status"`
 	UpdateSpec        ServiceSpecExport `json:"updateSpec"`
 	Volumes           []VolumeSpec      `json:"volumes"`
+	UpdateProgress    int               `json:"updateProgress"`
+	UpdatingProgress  int               `json:"updatingProgress"`
 	CreatedAt         time.Time         `json:"createdAt"`
 	UpdatedAt         time.Time         `json:"updatedAt"`
 }
