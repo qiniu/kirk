@@ -979,7 +979,7 @@ func (p *qcosClientImp) CreateJob(ctx context.Context, args CreateJobArgs) (err 
 // POST /v3/jobs/<name>
 func (p *qcosClientImp) UpdateJob(ctx context.Context, name string, args UpdateJobArgs) (err error) {
 	url := fmt.Sprintf("%s/v3/jobs/%s", p.host, name)
-	err = p.client.Call(ctx, nil, "POST", url)
+	err = p.client.CallWithJson(ctx, nil, "POST", url, args)
 	return
 }
 
