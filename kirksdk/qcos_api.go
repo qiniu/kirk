@@ -483,6 +483,10 @@ type CreateApArgs struct {
 	UnitType  string `json:"unitType"`
 	Host      string `json:"host"`
 	Title     string `json:"title"`
+	// domain auth
+	RequireAuth  string   `json:"requireAuth"`
+	UIDWhiteList []string `json:"uidWhiteList"`
+	UIDBlackList []string `json:"uidBlackList"`
 }
 
 type ListApsArgs struct {
@@ -544,20 +548,24 @@ type ApPortInfo struct {
 }
 
 type FullApInfo struct {
-	ApID        int          `json:"apid"`
-	Type        string       `json:"type"`
-	Title       string       `json:"title"`
-	IP          string       `json:"ip,omitempty"`
-	Domain      string       `json:"domain,omitempty"`
-	Provider    string       `json:"provider"`
-	Bandwidth   int          `json:"bandwidthMbps"`
-	Traffic     int          `json:"trafficBytes"`
-	UserDomains []string     `json:"userDomains,omitempty"`
-	Host        string       `json:"host,omitempty"`
-	UnitType    string       `json:"unitType,omitempty"`
-	CreatedAt   time.Time    `json:"createdAt"`
-	UpdatedAt   time.Time    `json:"updatedAt"`
-	Ports       []ApPortInfo `json:"ports"`
+	ApID        int       `json:"apid"`
+	Type        string    `json:"type"`
+	Title       string    `json:"title"`
+	IP          string    `json:"ip,omitempty"`
+	Domain      string    `json:"domain,omitempty"`
+	Provider    string    `json:"provider"`
+	Bandwidth   int       `json:"bandwidthMbps"`
+	Traffic     int       `json:"trafficBytes"`
+	UserDomains []string  `json:"userDomains,omitempty"`
+	Host        string    `json:"host,omitempty"`
+	UnitType    string    `json:"unitType,omitempty"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
+	// domain auth
+	RequireAuth  string       `json:"requireAuth,omitempty"`
+	UIDWhiteList []string     `json:"uidWhiteList,omitempty"`
+	UIDBlackList []string     `json:"uidBlackList,omitempty"`
+	Ports        []ApPortInfo `json:"ports"`
 }
 
 type SetApDescArgs struct {
@@ -565,6 +573,10 @@ type SetApDescArgs struct {
 	Host      string `json:"host"`
 	Title     string `json:"title"`
 	Bandwidth int    `json:"bandwidthMbps"`
+	// domain auth
+	RequireAuth  string   `json:"requireAuth"`
+	UIDWhiteList []string `json:"uidWhiteList"`
+	UIDBlackList []string `json:"uidBlackList"`
 }
 
 type ApBackendArgs struct {
