@@ -535,6 +535,8 @@ type ApPortInfo struct {
 	SessionTmoSec   int               `json:"sessionTimeoutSec"`
 	ProxyOpts       ApProxyOpts       `json:"proxyOptions"`
 	HealthCheckOpts ApHealthCheckOpts `json:"healthCheck"`
+	CreatedAt       time.Time         `json:"createdAt"`
+	UpdatedAt       time.Time         `json:"updatedAt"`
 	Backends        []struct {
 		Stack         string `json:"stack"`
 		Service       string `json:"service"`
