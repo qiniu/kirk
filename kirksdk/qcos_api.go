@@ -699,6 +699,7 @@ type CreateJobArgs struct {
 	Mode     string                 `json:"mode"`
 	Metadata []string               `json:"metadata,omitempty"`
 	RunAt    string                 `json:"runAt,omitempty"`
+	Deps     string                 `json:"deps,omitempty"`
 	Timeout  int                    `json:"timeout,omitempty"`
 }
 
