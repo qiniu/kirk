@@ -3,6 +3,7 @@ package kirksdk
 import (
 	"bufio"
 	"crypto/tls"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -22,6 +23,7 @@ import (
 )
 
 const DefaultStack = "default"
+const waitTimeout = 120 * time.Second
 
 const MultiStatus = 207
 
@@ -81,6 +83,19 @@ func (p *qcosClientImp) CreateStack(
 	return
 }
 
+func (p *qcosClientImp) SyncCreateStack(
+	ctx context.Context, args CreateStackArgs) (err error) {
+	err = p.CreateStack(ctx, args)
+	if err != nil {
+		return
+	}
+	err = p.Wait4StackRunning(args.Name, waitTimeout)
+	if err != nil {
+		return
+	}
+	return
+}
+
 // POST /v3/stacks/<stackName>
 func (p *qcosClientImp) UpdateStack(ctx context.Context, stackName string,
 	args UpdateStackArgs) (err error) {
@@ -91,6 +106,19 @@ func (p *qcosClientImp) UpdateStack(ctx context.Context, stackName string,
 
 	url := fmt.Sprintf("%s/v3/stacks/%s", p.host, stackName)
 	err = p.client.CallWithJson(ctx, nil, "POST", url, args)
+	return
+}
+
+func (p *qcosClientImp) SyncUpdateStack(ctx context.Context, stackName string,
+	args UpdateStackArgs) (err error) {
+	err = p.UpdateStack(ctx, stackName, args)
+	if err != nil {
+		return
+	}
+	err = p.Wait4StackRunning(stackName, waitTimeout)
+	if err != nil {
+		return
+	}
 	return
 }
 
@@ -183,6 +211,19 @@ func (p *qcosClientImp) CreateService(
 	return
 }
 
+func (p *qcosClientImp) SyncCreateService(
+	ctx context.Context, stackName string, args CreateServiceArgs) (err error) {
+	err = p.CreateService(ctx, stackName, args)
+	if err != nil {
+		return
+	}
+	err = p.Wait4ServiceRunning(stackName, args.Name, waitTimeout)
+	if err != nil {
+		return
+	}
+	return
+}
+
 // GET /v3/stacks/<stackName>/services/<serviceName>/inspect
 func (p *qcosClientImp) GetServiceInspect(ctx context.Context,
 	stackName string, serviceName string) (ret ServiceInfo, err error) {
@@ -222,6 +263,22 @@ func (p *qcosClientImp) UpdateService(ctx context.Context, stackName string,
 	return
 }
 
+func (p *qcosClientImp) SyncUpdateService(ctx context.Context, stackName string,
+	serviceName string, args UpdateServiceArgs) (err error) {
+	err = p.UpdateService(ctx, stackName, serviceName, args)
+	if err != nil {
+		return
+	}
+
+	if args.ManualUpdate == false {
+		err = p.Wait4ServiceRunning(stackName, serviceName, waitTimeout)
+		if err != nil {
+			return
+		}
+	}
+	return
+}
+
 // POST /v3/stacks/<stackName>/services/<serviceName>/deploy
 func (p *qcosClientImp) DeployService(ctx context.Context,
 	stackName string, serviceName string, args DeployServiceArgs) (err error) {
@@ -235,6 +292,31 @@ func (p *qcosClientImp) DeployService(ctx context.Context,
 	return
 }
 
+func (p *qcosClientImp) SyncDeployService(ctx context.Context,
+	stackName string, serviceName string, args DeployServiceArgs) (err error) {
+	err = p.DeployService(ctx, stackName, serviceName, args)
+	if err != nil {
+		return
+	}
+	if args.Operation == "ROLLBACK" || args.Operation == "COMPLETE" {
+		err = p.Wait4ServiceRunning(stackName, serviceName, waitTimeout)
+		if err != nil {
+			return
+		}
+	}
+	op := strings.Split(args.Operation, " ")
+	switch op[0] {
+	case "COMPLETE", "ROLLBACK":
+		err = p.Wait4ServiceRunning(stackName, serviceName, waitTimeout)
+		if err != nil {
+			return
+		}
+	default:
+		return
+	}
+	return
+}
+
 // POST /v3/stacks/<stackName>/services/<serviceName>/scale
 func (p *qcosClientImp) ScaleService(ctx context.Context,
 	stackName string, serviceName string, args ScaleServiceArgs) (err error) {
@@ -245,6 +327,19 @@ func (p *qcosClientImp) ScaleService(ctx context.Context,
 
 	url := fmt.Sprintf("%s/v3/stacks/%s/services/%s/scale", p.host, stackName, serviceName)
 	err = p.client.CallWithJson(ctx, nil, "POST", url, args)
+	return
+}
+
+func (p *qcosClientImp) SyncScaleService(ctx context.Context,
+	stackName string, serviceName string, args ScaleServiceArgs) (err error) {
+	err = p.ScaleService(ctx, stackName, serviceName, args)
+	if err != nil {
+		return
+	}
+	err = p.Wait4ServiceRunning(stackName, serviceName, waitTimeout)
+	if err != nil {
+		return
+	}
 	return
 }
 
@@ -299,6 +394,19 @@ func (p *qcosClientImp) CreateServiceVolume(ctx context.Context, stackName strin
 	return
 }
 
+func (p *qcosClientImp) SyncCreateServiceVolume(ctx context.Context, stackName string,
+	serviceName string, args CreateServiceVolumeArgs) (err error) {
+	err = p.CreateServiceVolume(ctx, stackName, serviceName, args)
+	if err != nil {
+		return
+	}
+	err = p.Wait4ServiceRunning(stackName, serviceName, waitTimeout)
+	if err != nil {
+		return
+	}
+	return
+}
+
 // POST /v3/stacks/<stackName>/services/<serviceName>/volumes/<volumeName>/extend
 func (p *qcosClientImp) ExtendServiceVolume(ctx context.Context, stackName string,
 	serviceName string, volumeName string, args ExtendVolumeArgs) (err error) {
@@ -312,6 +420,19 @@ func (p *qcosClientImp) ExtendServiceVolume(ctx context.Context, stackName strin
 	return
 }
 
+func (p *qcosClientImp) SyncExtendServiceVolume(ctx context.Context, stackName string,
+	serviceName string, volumeName string, args ExtendVolumeArgs) (err error) {
+	err = p.ExtendServiceVolume(ctx, stackName, serviceName, volumeName, args)
+	if err != nil {
+		return
+	}
+	err = p.Wait4ServiceRunning(stackName, serviceName, waitTimeout)
+	if err != nil {
+		return
+	}
+	return
+}
+
 // DELETE /v3/stacks/<stackName>/services/<serviceName>/volumes/<volumeName>
 func (p *qcosClientImp) DeleteServiceVolume(ctx context.Context, stackName string, serviceName string, volumeName string) (err error) {
 	if stackName == "" {
@@ -320,6 +441,18 @@ func (p *qcosClientImp) DeleteServiceVolume(ctx context.Context, stackName strin
 
 	url := fmt.Sprintf("%s/v3/stacks/%s/services/%s/volumes/%s", p.host, stackName, serviceName, volumeName)
 	err = p.client.Call(ctx, nil, "DELETE", url)
+	return
+}
+
+func (p *qcosClientImp) SyncDeleteServiceVolume(ctx context.Context, stackName string, serviceName string, volumeName string) (err error) {
+	err = p.DeleteServiceVolume(ctx, stackName, serviceName, volumeName)
+	if err != nil {
+		return
+	}
+	err = p.Wait4ServiceRunning(stackName, serviceName, waitTimeout)
+	if err != nil {
+		return
+	}
 	return
 }
 
@@ -1091,4 +1224,87 @@ func (p *qcosClientImp) GetContainerAlert(ctx context.Context, ip string, level 
 	url := fmt.Sprintf("%s/v3/alert/containers/%s%s", p.host, ip, query)
 	err = p.client.Call(ctx, &ret, "GET", url)
 	return
+}
+
+func (p *qcosClientImp) Wait4StackRunning(stackName string, timeout time.Duration) (err error) {
+	if stackName == "" {
+		stackName = DefaultStack
+	}
+
+	done := make(chan struct{})
+
+	go func() {
+		ctx, _ := context.WithTimeout(context.Background(), timeout)
+		for {
+			stackInfo, err := p.GetStack(ctx, stackName)
+			if err != nil {
+				if err.Error() == "context deadline exceeded" {
+					break
+				}
+			} else if err == nil && stackInfo.IsDeployed == true && stackInfo.Status == "RUNNING" {
+				runningNum := 0
+				for _, svcName := range stackInfo.Services {
+					err = p.Wait4ServiceRunning(stackName, svcName, timeout)
+					if err != nil {
+						break
+					}
+					runningNum += 1
+				}
+				if runningNum == len(stackInfo.Services) {
+					done <- struct{}{}
+					break
+				}
+			}
+			time.Sleep(time.Second)
+		}
+	}()
+
+	select {
+	case <-time.After(timeout):
+		return errors.New("Timeout in Wait4StackRunning")
+	case <-done:
+		return nil
+	}
+}
+
+func (p *qcosClientImp) Wait4ServiceRunning(stackName string, serviceName string, timeout time.Duration) (err error) {
+	if stackName == "" {
+		stackName = DefaultStack
+	}
+
+	done := make(chan struct{})
+
+	go func() {
+		ctx, _ := context.WithTimeout(context.Background(), timeout)
+		for {
+			svcInfo, err := p.GetServiceInspect(ctx, stackName, serviceName)
+			if err != nil {
+				if err.Error() == "context deadline exceeded" {
+					break
+				}
+			} else if err == nil && svcInfo.State == "DEPLOYED" && svcInfo.Status == "RUNNING" {
+				runningNum := 0
+				for _, contIp := range svcInfo.ContainerIPs {
+					ctx, _ := context.WithTimeout(context.Background(), timeout)
+					contInfo, err := p.GetContainerInspect(ctx, contIp)
+					if err != nil || contInfo.Status != "RUNNING" {
+						break
+					}
+					runningNum += 1
+				}
+				if runningNum == len(svcInfo.ContainerIPs) {
+					done <- struct{}{}
+					break
+				}
+			}
+			time.Sleep(time.Second)
+		}
+	}()
+
+	select {
+	case <-time.After(timeout):
+		return errors.New("Timeout in Wait4ServiceRunning")
+	case <-done:
+		return nil
+	}
 }
