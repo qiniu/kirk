@@ -13,10 +13,17 @@ type QcosClient interface {
 	ListStacks(ctx context.Context) (ret []StackInfo, err error)
 
 	// POST /v3/stacks
+	// Async
 	CreateStack(ctx context.Context, args CreateStackArgs) (err error)
+	// Sync
+	SyncCreateStack(ctx context.Context, args CreateStackArgs) (err error)
 
 	// POST /v3/stacks/<stackName>
+	// Async
 	UpdateStack(
+		ctx context.Context, stackName string, args UpdateStackArgs) (err error)
+	// Sync
+	SyncUpdateStack(
 		ctx context.Context, stackName string, args UpdateStackArgs) (err error)
 
 	// GET /v3/stacks/<stackName>
@@ -27,19 +34,26 @@ type QcosClient interface {
 		ctx context.Context, stackName string) (ret CreateStackArgs, err error)
 
 	// DELETE /v3/stacks/<stackName>
+	// Async
 	DeleteStack(ctx context.Context, stackName string) (err error)
 
 	// POST /v3/stacks/<stackName>/start
+	// Sync
 	StartStack(ctx context.Context, stackName string) (err error)
 
 	// POST /v3/stacks/<stackName>/stop
+	// Sync
 	StopStack(ctx context.Context, stackName string) (err error)
 
 	// GET /v3/stacks/<stackName>/services
 	ListServices(ctx context.Context, stackName string) (ret []ServiceInfo, err error)
 
 	// POST /v3/stacks/<stackName>/services
+	// Async
 	CreateService(
+		ctx context.Context, stackName string, args CreateServiceArgs) (err error)
+	// Sync
+	SyncCreateService(
 		ctx context.Context, stackName string, args CreateServiceArgs) (err error)
 
 	// GET /v3/stacks/<stackName>/services/<serviceName>/inspect
@@ -51,39 +65,65 @@ type QcosClient interface {
 		stackName string, serviceName string) (ret ServiceExportInfo, err error)
 
 	// POST /v3/stacks/<stackName>/services/<serviceName>
+	// Async
 	UpdateService(ctx context.Context,
+		stackName string, serviceName string, args UpdateServiceArgs) (err error)
+	// Sync
+	SyncUpdateService(ctx context.Context,
 		stackName string, serviceName string, args UpdateServiceArgs) (err error)
 
 	// POST /v3/stack/<stackName>/services/<serviceName>/deploy
+	// Async
 	DeployService(ctx context.Context,
+		stackName string, serviceName string, args DeployServiceArgs) (err error)
+	// Sync
+	SyncDeployService(ctx context.Context,
 		stackName string, serviceName string, args DeployServiceArgs) (err error)
 
 	// POST /v3/stacks/<stackName>/services/<serviceName>/scale
+	// Async
 	ScaleService(ctx context.Context,
+		stackName string, serviceName string, args ScaleServiceArgs) (err error)
+	// Sync
+	SyncScaleService(ctx context.Context,
 		stackName string, serviceName string, args ScaleServiceArgs) (err error)
 
 	// POST /v3/stacks/<stackName>/services/<serviceName>/start
+	// Sync
 	StartService(
 		ctx context.Context, stackName string, serviceName string) (err error)
 
 	// POST /v3/stacks/<stackName>/services/<serviceName>/stop
+	// Sync
 	StopService(
 		ctx context.Context, stackName string, serviceName string) (err error)
 
 	// DELETE /v3/stacks/<stackName>/services/<serviceName>
+	// Async
 	DeleteService(
 		ctx context.Context, stackName string, serviceName string) (err error)
 
 	// POST /v3/stacks/<stackName>/services/<serviceName>/volumes
+	// Async
 	CreateServiceVolume(ctx context.Context, stackName string,
+		serviceName string, args CreateServiceVolumeArgs) (err error)
+	// Sync
+	SyncCreateServiceVolume(ctx context.Context, stackName string,
 		serviceName string, args CreateServiceVolumeArgs) (err error)
 
 	// POST /v3/stacks/<stackName>/services/<serviceName>/volumes/<volumeName>/extend
+	// Async
 	ExtendServiceVolume(ctx context.Context, stackName string,
+		serviceName string, volumeName string, args ExtendVolumeArgs) (err error)
+	// Sync
+	SyncExtendServiceVolume(ctx context.Context, stackName string,
 		serviceName string, volumeName string, args ExtendVolumeArgs) (err error)
 
 	// DELETE /v3/stacks/<stackName>/services/<serviceName>/volumes/<volumeName>
+	// Async
 	DeleteServiceVolume(ctx context.Context, stackName string, serviceName string, volumeName string) (err error)
+	// Sync
+	SyncDeleteServiceVolume(ctx context.Context, stackName string, serviceName string, volumeName string) (err error)
 
 	// POST /v3/stacks/<stackName>/services/<serviceName>/natip
 	SetServiceNatIP(
@@ -105,9 +145,11 @@ type QcosClient interface {
 	StartContainer(ctx context.Context, ip string) (err error)
 
 	// POST /v3/containers/<ip>/stop
+	// Sync
 	StopContainer(ctx context.Context, ip string) (err error)
 
 	// POST /v3/containers/<ip>/restart
+	// Sync
 	RestartContainer(ctx context.Context, ip string) (err error)
 
 	// POST /v3/containers/<ip>/commit
