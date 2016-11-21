@@ -669,6 +669,7 @@ type JobTaskSpec struct {
 	Envs          []string           `json:"envs,omitempty"`
 	Hosts         []string           `json:"hosts,omitempty"`
 	LogCollectors []LogCollectorSpec `json:"logCollectors,omitempty"`
+	Deps          []string           `json:"deps,omitempty"`
 	WorkDir       string             `json:"workDir,omitempty"`
 	InstanceNum   int                `json:"instanceNum,omitempty"`
 	UnitType      string             `json:"unitType,omitempty"`
@@ -699,7 +700,6 @@ type CreateJobArgs struct {
 	Mode     string                 `json:"mode"`
 	Metadata []string               `json:"metadata,omitempty"`
 	RunAt    string                 `json:"runAt,omitempty"`
-	Deps     string                 `json:"deps,omitempty"`
 	Timeout  int                    `json:"timeout,omitempty"`
 }
 
