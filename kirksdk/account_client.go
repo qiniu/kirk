@@ -3,64 +3,13 @@ package kirksdk
 import (
 	"fmt"
 	"net/http"
-	"sync"
 
 	"golang.org/x/net/context"
 	"qiniupkg.com/kirk/kirksdk/mac"
 	"qiniupkg.com/x/rpc.v7"
 )
 
-const appVersionPrefix = "/v1"
-
-type appClient struct {
-	appURI    string
-	accessKey string
-	secretKey string
-	host      string
-	userAgent string
-	client    rpc.Client
-}
-
-func (p *appClient) getInfo(ctx context.Context) (ret AppInfo, err error) {
-	url := fmt.Sprintf("%s%s/info", p.host, appVersionPrefix)
-	err = p.client.Call(ctx, &ret, "GET", url)
-	return
-}
-
-func (p *appClient) listAlertMethods(ctx context.Context) (ret []AlertMethodInfo, err error) {
-	ret1 := AlertMethods{
-		Methods: []AlertMethodInfo{},
-	}
-
-	url := fmt.Sprintf("%s%s/alert/methods", p.host, appVersionPrefix)
-	err = p.client.Call(ctx, &ret1, "GET", url)
-	ret = ret1.Methods
-	return
-}
-
-func (p *appClient) getAlertMethod(ctx context.Context, id string) (ret AlertMethodInfo, err error) {
-	url := fmt.Sprintf("%s%s/alert/methods/%s", p.host, appVersionPrefix, id)
-	err = p.client.Call(ctx, &ret, "GET", url)
-	return
-}
-
-func (p *appClient) createAlertMethod(ctx context.Context, args CreateAlertMethodArgs) (ret AlertMethodInfo, err error) {
-	url := fmt.Sprintf("%s%s/alert/methods", p.host, appVersionPrefix)
-	err = p.client.CallWithJson(ctx, &ret, "POST", url, args)
-	return
-}
-
-func (p *appClient) updateAlertMethod(ctx context.Context, id string, args UpdateAlertMethodArgs) (ret AlertMethodInfo, err error) {
-	url := fmt.Sprintf("%s%s/alert/methods/%s", p.host, appVersionPrefix, id)
-	err = p.client.CallWithJson(ctx, &ret, "POST", url, args)
-	return
-}
-
-func (p *appClient) deleteAlertMethod(ctx context.Context, id string) (err error) {
-	url := fmt.Sprintf("%s%s/alert/methods/%s", p.host, appVersionPrefix, id)
-	err = p.client.Call(ctx, nil, "DELETE", url)
-	return
-}
+const appVersionPrefix = "/v3"
 
 type accountClientImp struct {
 	accessKey string
@@ -68,17 +17,12 @@ type accountClientImp struct {
 	host      string
 	userAgent string
 	client    rpc.Client
-
-	transport     http.RoundTripper
-	appsClientMap map[string]*appClient
-	mapLock       *sync.Mutex
+	transport http.RoundTripper
 }
 
 func NewAccountClient(cfg AccountConfig) AccountClient {
 
 	p := new(accountClientImp)
-	p.appsClientMap = make(map[string]*appClient)
-	p.mapLock = &sync.Mutex{}
 	p.host = cleanHost(cfg.Host)
 	p.transport = cfg.Transport
 	p.userAgent = cfg.UserAgent
@@ -96,81 +40,24 @@ func NewAccountClient(cfg AccountConfig) AccountClient {
 	return p
 }
 
-func (p *accountClientImp) getAppClient(ctx context.Context, appURI string) (ret *appClient, err error) {
-	p.mapLock.Lock()
-	defer p.mapLock.Unlock()
-
-	var ok bool
-	if ret, ok = p.appsClientMap[appURI]; !ok {
-		ret, err = p.createAppClient(ctx, appURI)
-		if err != nil {
-			return
-		}
-
-		p.appsClientMap[appURI] = ret
-	}
-
-	return
-}
-
-func (p *accountClientImp) createAppClient(ctx context.Context, appURI string) (ret *appClient, err error) {
-	keyPairs, err := p.GetAppKeys(ctx, appURI)
-	if err != nil {
-		return
-	}
-
-	var ak, sk string
-	for _, keyPair := range keyPairs {
-		if keyPair.State == KeyStateEnabled {
-			ak = keyPair.AccessKey
-			sk = keyPair.SecretKey
-			break
-		}
-	}
-
-	if ak == "" {
-		err = fmt.Errorf("Fail to find keys for app \"%s\"", appURI)
-		return
-	}
-
-	t := newKirksdkTransport(p.userAgent, p.transport)
-	m := mac.New(ak, sk)
-	c := rpc.Client{mac.NewClient(m, t)}
-
-	return &appClient{
-		appURI:    appURI,
-		accessKey: ak,
-		secretKey: sk,
-		host:      p.host,
-		userAgent: p.userAgent,
-		client:    c,
-	}, nil
-}
-
 func (p *accountClientImp) GetAccountInfo(ctx context.Context) (ret AccountInfo, err error) {
 	url := fmt.Sprintf("%s%s/info", p.host, appVersionPrefix)
 	err = p.client.Call(ctx, &ret, "GET", url)
 	return
 }
 
-type createAppRet struct {
-	AppURI string `json:"appUri"`
+type createAppArgsWithName struct {
+	Name string `json:"name"`
+	CreateAppArgs
 }
 
 func (p *accountClientImp) CreateApp(ctx context.Context, appName string, args CreateAppArgs) (ret AppInfo, err error) {
-	var createdURI createAppRet
-	url := fmt.Sprintf("%s%s/apps/%s", p.host, appVersionPrefix, appName)
-	err = p.client.CallWithJson(ctx, &createdURI, "POST", url, args)
-	if err != nil {
-		return
+	argsWithName := createAppArgsWithName{
+		Name:          appName,
+		CreateAppArgs: args,
 	}
-
-	client, err := p.getAppClient(ctx, createdURI.AppURI)
-	if err != nil {
-		return
-	}
-
-	ret, err = client.getInfo(ctx)
+	url := fmt.Sprintf("%s%s/apps", p.host, appVersionPrefix)
+	err = p.client.CallWithJson(ctx, &ret, "POST", url, argsWithName)
 	return
 }
 
@@ -181,12 +68,9 @@ func (p *accountClientImp) DeleteApp(ctx context.Context, appURI string) (err er
 }
 
 func (p *accountClientImp) GetApp(ctx context.Context, appURI string) (ret AppInfo, err error) {
-	c, err := p.getAppClient(ctx, appURI)
-	if err != nil {
-		return
-	}
-
-	return c.getInfo(ctx)
+	url := fmt.Sprintf("%s%s/apps/%s", p.host, appVersionPrefix, appURI)
+	err = p.client.Call(ctx, &ret, "GET", url)
+	return
 }
 
 func (p *accountClientImp) GetAppKeys(ctx context.Context, appURI string) (ret []KeyPair, err error) {
@@ -196,7 +80,7 @@ func (p *accountClientImp) GetAppKeys(ctx context.Context, appURI string) (ret [
 }
 
 func (p *accountClientImp) ListApps(ctx context.Context) (ret []AppInfo, err error) {
-	url := fmt.Sprintf("%s%s/children", p.host, appVersionPrefix)
+	url := fmt.Sprintf("%s%s/apps", p.host, appVersionPrefix)
 	err = p.client.Call(ctx, &ret, "GET", url)
 	return
 }
@@ -214,54 +98,39 @@ func (p *accountClientImp) GetRegion(ctx context.Context, regionName string) (re
 }
 
 func (p *accountClientImp) ListRegions(ctx context.Context) (ret []RegionInfo, err error) {
-	url := p.host + appVersionPrefix + "/regions"
+	url := fmt.Sprintf("%s%s/regions", p.host, appVersionPrefix)
 	err = p.client.Call(ctx, &ret, "GET", url)
 	return
 }
 
 func (p *accountClientImp) CreateAlertMethod(ctx context.Context, appURI string, args CreateAlertMethodArgs) (ret AlertMethodInfo, err error) {
-	c, err := p.getAppClient(ctx, appURI)
-	if err != nil {
-		return
-	}
-
-	return c.createAlertMethod(ctx, args)
+	url := fmt.Sprintf("%s%s/apps/%s/alert/methods", p.host, appVersionPrefix, appURI)
+	err = p.client.CallWithJson(ctx, &ret, "POST", url, args)
+	return
 }
 
 func (p *accountClientImp) DeleteAlertMethod(ctx context.Context, appURI string, id string) (err error) {
-	c, err := p.getAppClient(ctx, appURI)
-	if err != nil {
-		return
-	}
-
-	return c.deleteAlertMethod(ctx, id)
+	url := fmt.Sprintf("%s%s/apps/%s/alert/methods/%s", p.host, appVersionPrefix, appURI, id)
+	err = p.client.Call(ctx, nil, "DELETE", url)
+	return
 }
 
 func (p *accountClientImp) GetAlertMethod(ctx context.Context, appURI string, id string) (ret AlertMethodInfo, err error) {
-	c, err := p.getAppClient(ctx, appURI)
-	if err != nil {
-		return
-	}
-
-	return c.getAlertMethod(ctx, id)
+	url := fmt.Sprintf("%s%s/apps/%s/alert/methods/%s", p.host, appVersionPrefix, appURI, id)
+	err = p.client.Call(ctx, &ret, "GET", url)
+	return
 }
 
 func (p *accountClientImp) ListAlertMethod(ctx context.Context, appURI string) (ret []AlertMethodInfo, err error) {
-	c, err := p.getAppClient(ctx, appURI)
-	if err != nil {
-		return
-	}
-
-	return c.listAlertMethods(ctx)
+	url := fmt.Sprintf("%s%s/apps/%s/alert/methods", p.host, appVersionPrefix, appURI)
+	err = p.client.Call(ctx, &ret, "GET", url)
+	return
 }
 
 func (p *accountClientImp) UpdateAlertMethod(ctx context.Context, appURI string, id string, args UpdateAlertMethodArgs) (ret AlertMethodInfo, err error) {
-	c, err := p.getAppClient(ctx, appURI)
-	if err != nil {
-		return
-	}
-
-	return c.updateAlertMethod(ctx, id, args)
+	url := fmt.Sprintf("%s%s/apps/%s/alert/methods/%s", p.host, appVersionPrefix, appURI, id)
+	err = p.client.CallWithJson(ctx, &ret, "PUT", url, args)
+	return
 }
 
 func (p *accountClientImp) GetIndexClient(ctx context.Context) (client IndexClient, err error) {

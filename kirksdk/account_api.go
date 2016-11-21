@@ -103,7 +103,7 @@ type CreateAppArgs struct {
 // AccountInfo 包含 Account 的相关信息
 type AccountInfo struct {
 	ID               uint32    `json:"id"`
-	Name             string    `json:"uri"`
+	Name             string    `json:"name"`
 	Title            string    `json:"title"`
 	CreationTime     time.Time `json:"ctime"`
 	ModificationTime time.Time `json:"mtime"`
