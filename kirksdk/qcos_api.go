@@ -89,13 +89,19 @@ type QcosClient interface {
 		stackName string, serviceName string, args ScaleServiceArgs) (err error)
 
 	// POST /v3/stacks/<stackName>/services/<serviceName>/start
-	// Sync
+	// Sync(status not synced)
 	StartService(
+		ctx context.Context, stackName string, serviceName string) (err error)
+	// Sync(status synced)
+	SyncStartService(
 		ctx context.Context, stackName string, serviceName string) (err error)
 
 	// POST /v3/stacks/<stackName>/services/<serviceName>/stop
-	// Sync
+	// Sync(status not synced)
 	StopService(
+		ctx context.Context, stackName string, serviceName string) (err error)
+	// Sync(status synced)
+	SyncStopService(
 		ctx context.Context, stackName string, serviceName string) (err error)
 
 	// DELETE /v3/stacks/<stackName>/services/<serviceName>

@@ -89,7 +89,7 @@ func (p *qcosClientImp) SyncCreateStack(
 	if err != nil {
 		return
 	}
-	err = p.Wait4StackRunning(args.Name, waitTimeout)
+	err = p.wait4StackRunning(args.Name, waitTimeout)
 	if err != nil {
 		return
 	}
@@ -115,7 +115,7 @@ func (p *qcosClientImp) SyncUpdateStack(ctx context.Context, stackName string,
 	if err != nil {
 		return
 	}
-	err = p.Wait4StackRunning(stackName, waitTimeout)
+	err = p.wait4StackRunning(stackName, waitTimeout)
 	if err != nil {
 		return
 	}
@@ -217,7 +217,7 @@ func (p *qcosClientImp) SyncCreateService(
 	if err != nil {
 		return
 	}
-	err = p.Wait4ServiceRunning(stackName, args.Name, waitTimeout)
+	err = p.wait4ServiceRunning(stackName, args.Name, waitTimeout)
 	if err != nil {
 		return
 	}
@@ -271,7 +271,7 @@ func (p *qcosClientImp) SyncUpdateService(ctx context.Context, stackName string,
 	}
 
 	if args.ManualUpdate == false {
-		err = p.Wait4ServiceRunning(stackName, serviceName, waitTimeout)
+		err = p.wait4ServiceRunning(stackName, serviceName, waitTimeout)
 		if err != nil {
 			return
 		}
@@ -299,7 +299,7 @@ func (p *qcosClientImp) SyncDeployService(ctx context.Context,
 		return
 	}
 	if args.Operation == "ROLLBACK" || args.Operation == "COMPLETE" {
-		err = p.Wait4ServiceRunning(stackName, serviceName, waitTimeout)
+		err = p.wait4ServiceRunning(stackName, serviceName, waitTimeout)
 		if err != nil {
 			return
 		}
@@ -307,7 +307,7 @@ func (p *qcosClientImp) SyncDeployService(ctx context.Context,
 	op := strings.Split(args.Operation, " ")
 	switch op[0] {
 	case "COMPLETE", "ROLLBACK":
-		err = p.Wait4ServiceRunning(stackName, serviceName, waitTimeout)
+		err = p.wait4ServiceRunning(stackName, serviceName, waitTimeout)
 		if err != nil {
 			return
 		}
@@ -336,7 +336,7 @@ func (p *qcosClientImp) SyncScaleService(ctx context.Context,
 	if err != nil {
 		return
 	}
-	err = p.Wait4ServiceRunning(stackName, serviceName, waitTimeout)
+	err = p.wait4ServiceRunning(stackName, serviceName, waitTimeout)
 	if err != nil {
 		return
 	}
@@ -356,6 +356,19 @@ func (p *qcosClientImp) StartService(
 	return
 }
 
+func (p *qcosClientImp) SyncStartService(
+	ctx context.Context, stackName string, serviceName string) (err error) {
+	err = p.StartService(ctx, stackName, serviceName)
+	if err != nil {
+		return
+	}
+	err = p.wait4ServiceRunning(stackName, serviceName, waitTimeout)
+	if err != nil {
+		return
+	}
+	return
+}
+
 // POST /v3/stacks/<stackName>/services/<serviceName>/stop
 func (p *qcosClientImp) StopService(
 	ctx context.Context, stackName string, serviceName string) (err error) {
@@ -366,6 +379,19 @@ func (p *qcosClientImp) StopService(
 
 	url := fmt.Sprintf("%s/v3/stacks/%s/services/%s/stop", p.host, stackName, serviceName)
 	err = p.client.CallWithJson(ctx, nil, "POST", url, nil)
+	return
+}
+
+func (p *qcosClientImp) SyncStopService(
+	ctx context.Context, stackName string, serviceName string) (err error) {
+	err = p.StopService(ctx, stackName, serviceName)
+	if err != nil {
+		return
+	}
+	err = p.wait4ServiceStopped(stackName, serviceName, waitTimeout)
+	if err != nil {
+		return
+	}
 	return
 }
 
@@ -400,7 +426,7 @@ func (p *qcosClientImp) SyncCreateServiceVolume(ctx context.Context, stackName s
 	if err != nil {
 		return
 	}
-	err = p.Wait4ServiceRunning(stackName, serviceName, waitTimeout)
+	err = p.wait4ServiceRunning(stackName, serviceName, waitTimeout)
 	if err != nil {
 		return
 	}
@@ -426,7 +452,7 @@ func (p *qcosClientImp) SyncExtendServiceVolume(ctx context.Context, stackName s
 	if err != nil {
 		return
 	}
-	err = p.Wait4ServiceRunning(stackName, serviceName, waitTimeout)
+	err = p.wait4ServiceRunning(stackName, serviceName, waitTimeout)
 	if err != nil {
 		return
 	}
@@ -449,7 +475,7 @@ func (p *qcosClientImp) SyncDeleteServiceVolume(ctx context.Context, stackName s
 	if err != nil {
 		return
 	}
-	err = p.Wait4ServiceRunning(stackName, serviceName, waitTimeout)
+	err = p.wait4ServiceRunning(stackName, serviceName, waitTimeout)
 	if err != nil {
 		return
 	}
@@ -1226,7 +1252,7 @@ func (p *qcosClientImp) GetContainerAlert(ctx context.Context, ip string, level 
 	return
 }
 
-func (p *qcosClientImp) Wait4StackRunning(stackName string, timeout time.Duration) (err error) {
+func (p *qcosClientImp) wait4StackRunning(stackName string, timeout time.Duration) (err error) {
 	if stackName == "" {
 		stackName = DefaultStack
 	}
@@ -1244,7 +1270,7 @@ func (p *qcosClientImp) Wait4StackRunning(stackName string, timeout time.Duratio
 			} else if err == nil && stackInfo.IsDeployed == true && stackInfo.Status == "RUNNING" {
 				runningNum := 0
 				for _, svcName := range stackInfo.Services {
-					err = p.Wait4ServiceRunning(stackName, svcName, timeout)
+					err = p.wait4ServiceRunning(stackName, svcName, timeout)
 					if err != nil {
 						break
 					}
@@ -1261,13 +1287,13 @@ func (p *qcosClientImp) Wait4StackRunning(stackName string, timeout time.Duratio
 
 	select {
 	case <-time.After(timeout):
-		return errors.New("Timeout in Wait4StackRunning")
+		return errors.New("Timeout in wait4StackRunning")
 	case <-done:
 		return nil
 	}
 }
 
-func (p *qcosClientImp) Wait4ServiceRunning(stackName string, serviceName string, timeout time.Duration) (err error) {
+func (p *qcosClientImp) wait4ServiceRunning(stackName string, serviceName string, timeout time.Duration) (err error) {
 	if stackName == "" {
 		stackName = DefaultStack
 	}
@@ -1303,7 +1329,49 @@ func (p *qcosClientImp) Wait4ServiceRunning(stackName string, serviceName string
 
 	select {
 	case <-time.After(timeout):
-		return errors.New("Timeout in Wait4ServiceRunning")
+		return errors.New("Timeout in wait4ServiceRunning")
+	case <-done:
+		return nil
+	}
+}
+
+func (p *qcosClientImp) wait4ServiceStopped(stackName string, serviceName string, timeout time.Duration) (err error) {
+	if stackName == "" {
+		stackName = DefaultStack
+	}
+
+	done := make(chan struct{})
+
+	go func() {
+		ctx, _ := context.WithTimeout(context.Background(), timeout)
+		for {
+			svcInfo, err := p.GetServiceInspect(ctx, stackName, serviceName)
+			if err != nil {
+				if err.Error() == "context deadline exceeded" {
+					break
+				}
+			} else if err == nil && svcInfo.State == "STOPPED" && svcInfo.Status == "NOT-RUNNING" {
+				runningNum := 0
+				for _, contIp := range svcInfo.ContainerIPs {
+					ctx, _ := context.WithTimeout(context.Background(), timeout)
+					contInfo, err := p.GetContainerInspect(ctx, contIp)
+					if err != nil || contInfo.Status != "EXITED" {
+						break
+					}
+					runningNum += 1
+				}
+				if runningNum == len(svcInfo.ContainerIPs) {
+					done <- struct{}{}
+					break
+				}
+			}
+			time.Sleep(time.Second)
+		}
+	}()
+
+	select {
+	case <-time.After(timeout):
+		return errors.New("Timeout in wait4ServiceRunning")
 	case <-done:
 		return nil
 	}
