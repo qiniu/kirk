@@ -190,7 +190,7 @@ func (p *accountClientImp) GetQcosClient(ctx context.Context, appURI string) (cl
 		keyChan <- result
 	}()
 
-	// Get qocos end point
+	// Get qcos end point
 	go func() {
 		var result endpointResult
 		appInfos, err := p.ListApps(ctx)
