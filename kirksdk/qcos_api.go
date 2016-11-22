@@ -13,10 +13,17 @@ type QcosClient interface {
 	ListStacks(ctx context.Context) (ret []StackInfo, err error)
 
 	// POST /v3/stacks
+	// Async
 	CreateStack(ctx context.Context, args CreateStackArgs) (err error)
+	// Sync
+	SyncCreateStack(ctx context.Context, args CreateStackArgs) (err error)
 
 	// POST /v3/stacks/<stackName>
+	// Async
 	UpdateStack(
+		ctx context.Context, stackName string, args UpdateStackArgs) (err error)
+	// Sync
+	SyncUpdateStack(
 		ctx context.Context, stackName string, args UpdateStackArgs) (err error)
 
 	// GET /v3/stacks/<stackName>
@@ -27,19 +34,26 @@ type QcosClient interface {
 		ctx context.Context, stackName string) (ret CreateStackArgs, err error)
 
 	// DELETE /v3/stacks/<stackName>
+	// Async
 	DeleteStack(ctx context.Context, stackName string) (err error)
 
 	// POST /v3/stacks/<stackName>/start
+	// Sync
 	StartStack(ctx context.Context, stackName string) (err error)
 
 	// POST /v3/stacks/<stackName>/stop
+	// Sync
 	StopStack(ctx context.Context, stackName string) (err error)
 
 	// GET /v3/stacks/<stackName>/services
 	ListServices(ctx context.Context, stackName string) (ret []ServiceInfo, err error)
 
 	// POST /v3/stacks/<stackName>/services
+	// Async
 	CreateService(
+		ctx context.Context, stackName string, args CreateServiceArgs) (err error)
+	// Sync
+	SyncCreateService(
 		ctx context.Context, stackName string, args CreateServiceArgs) (err error)
 
 	// GET /v3/stacks/<stackName>/services/<serviceName>/inspect
@@ -51,39 +65,71 @@ type QcosClient interface {
 		stackName string, serviceName string) (ret ServiceExportInfo, err error)
 
 	// POST /v3/stacks/<stackName>/services/<serviceName>
+	// Async
 	UpdateService(ctx context.Context,
+		stackName string, serviceName string, args UpdateServiceArgs) (err error)
+	// Sync
+	SyncUpdateService(ctx context.Context,
 		stackName string, serviceName string, args UpdateServiceArgs) (err error)
 
 	// POST /v3/stack/<stackName>/services/<serviceName>/deploy
+	// Async
 	DeployService(ctx context.Context,
+		stackName string, serviceName string, args DeployServiceArgs) (err error)
+	// Sync
+	SyncDeployService(ctx context.Context,
 		stackName string, serviceName string, args DeployServiceArgs) (err error)
 
 	// POST /v3/stacks/<stackName>/services/<serviceName>/scale
+	// Async
 	ScaleService(ctx context.Context,
+		stackName string, serviceName string, args ScaleServiceArgs) (err error)
+	// Sync
+	SyncScaleService(ctx context.Context,
 		stackName string, serviceName string, args ScaleServiceArgs) (err error)
 
 	// POST /v3/stacks/<stackName>/services/<serviceName>/start
+	// Sync(status not synced)
 	StartService(
+		ctx context.Context, stackName string, serviceName string) (err error)
+	// Sync(status synced)
+	SyncStartService(
 		ctx context.Context, stackName string, serviceName string) (err error)
 
 	// POST /v3/stacks/<stackName>/services/<serviceName>/stop
+	// Sync(status not synced)
 	StopService(
+		ctx context.Context, stackName string, serviceName string) (err error)
+	// Sync(status synced)
+	SyncStopService(
 		ctx context.Context, stackName string, serviceName string) (err error)
 
 	// DELETE /v3/stacks/<stackName>/services/<serviceName>
+	// Async
 	DeleteService(
 		ctx context.Context, stackName string, serviceName string) (err error)
 
 	// POST /v3/stacks/<stackName>/services/<serviceName>/volumes
+	// Async
 	CreateServiceVolume(ctx context.Context, stackName string,
+		serviceName string, args CreateServiceVolumeArgs) (err error)
+	// Sync
+	SyncCreateServiceVolume(ctx context.Context, stackName string,
 		serviceName string, args CreateServiceVolumeArgs) (err error)
 
 	// POST /v3/stacks/<stackName>/services/<serviceName>/volumes/<volumeName>/extend
+	// Async
 	ExtendServiceVolume(ctx context.Context, stackName string,
+		serviceName string, volumeName string, args ExtendVolumeArgs) (err error)
+	// Sync
+	SyncExtendServiceVolume(ctx context.Context, stackName string,
 		serviceName string, volumeName string, args ExtendVolumeArgs) (err error)
 
 	// DELETE /v3/stacks/<stackName>/services/<serviceName>/volumes/<volumeName>
+	// Async
 	DeleteServiceVolume(ctx context.Context, stackName string, serviceName string, volumeName string) (err error)
+	// Sync
+	SyncDeleteServiceVolume(ctx context.Context, stackName string, serviceName string, volumeName string) (err error)
 
 	// POST /v3/stacks/<stackName>/services/<serviceName>/natip
 	SetServiceNatIP(
@@ -105,9 +151,11 @@ type QcosClient interface {
 	StartContainer(ctx context.Context, ip string) (err error)
 
 	// POST /v3/containers/<ip>/stop
+	// Sync
 	StopContainer(ctx context.Context, ip string) (err error)
 
 	// POST /v3/containers/<ip>/restart
+	// Sync
 	RestartContainer(ctx context.Context, ip string) (err error)
 
 	// POST /v3/containers/<ip>/commit
@@ -335,6 +383,8 @@ type ServiceInfo struct {
 	Status            Status            `json:"status"`
 	UpdateSpec        ServiceSpecExport `json:"updateSpec"`
 	Volumes           []VolumeSpec      `json:"volumes"`
+	UpdateProgress    int               `json:"updateProgress"`
+	UpdatingProgress  int               `json:"updatingProgress"`
 	CreatedAt         time.Time         `json:"createdAt"`
 	UpdatedAt         time.Time         `json:"updatedAt"`
 }
@@ -481,6 +531,10 @@ type CreateApArgs struct {
 	UnitType  string `json:"unitType"`
 	Host      string `json:"host"`
 	Title     string `json:"title"`
+	// domain auth
+	RequireAuth  string   `json:"requireAuth"`
+	UIDWhiteList []string `json:"uidWhiteList"`
+	UIDBlackList []string `json:"uidBlackList"`
 }
 
 type ListApsArgs struct {
@@ -529,6 +583,8 @@ type ApPortInfo struct {
 	SessionTmoSec   int               `json:"sessionTimeoutSec"`
 	ProxyOpts       ApProxyOpts       `json:"proxyOptions"`
 	HealthCheckOpts ApHealthCheckOpts `json:"healthCheck"`
+	CreatedAt       time.Time         `json:"createdAt"`
+	UpdatedAt       time.Time         `json:"updatedAt"`
 	Backends        []struct {
 		Stack         string `json:"stack"`
 		Service       string `json:"service"`
@@ -542,20 +598,24 @@ type ApPortInfo struct {
 }
 
 type FullApInfo struct {
-	ApID        int          `json:"apid"`
-	Type        string       `json:"type"`
-	Title       string       `json:"title"`
-	IP          string       `json:"ip,omitempty"`
-	Domain      string       `json:"domain,omitempty"`
-	Provider    string       `json:"provider"`
-	Bandwidth   int          `json:"bandwidthMbps"`
-	Traffic     int          `json:"trafficBytes"`
-	UserDomains []string     `json:"userDomains,omitempty"`
-	Host        string       `json:"host,omitempty"`
-	UnitType    string       `json:"unitType,omitempty"`
-	CreatedAt   time.Time    `json:"createdAt"`
-	UpdatedAt   time.Time    `json:"updatedAt"`
-	Ports       []ApPortInfo `json:"ports"`
+	ApID        int       `json:"apid"`
+	Type        string    `json:"type"`
+	Title       string    `json:"title"`
+	IP          string    `json:"ip,omitempty"`
+	Domain      string    `json:"domain,omitempty"`
+	Provider    string    `json:"provider"`
+	Bandwidth   int       `json:"bandwidthMbps"`
+	Traffic     int       `json:"trafficBytes"`
+	UserDomains []string  `json:"userDomains,omitempty"`
+	Host        string    `json:"host,omitempty"`
+	UnitType    string    `json:"unitType,omitempty"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
+	// domain auth
+	RequireAuth  string       `json:"requireAuth,omitempty"`
+	UIDWhiteList []string     `json:"uidWhiteList,omitempty"`
+	UIDBlackList []string     `json:"uidBlackList,omitempty"`
+	Ports        []ApPortInfo `json:"ports"`
 }
 
 type SetApDescArgs struct {
@@ -563,6 +623,10 @@ type SetApDescArgs struct {
 	Host      string `json:"host"`
 	Title     string `json:"title"`
 	Bandwidth int    `json:"bandwidthMbps"`
+	// domain auth
+	RequireAuth  string   `json:"requireAuth"`
+	UIDWhiteList []string `json:"uidWhiteList"`
+	UIDBlackList []string `json:"uidBlackList"`
 }
 
 type ApBackendArgs struct {
@@ -653,6 +717,7 @@ type JobTaskSpec struct {
 	Envs          []string           `json:"envs,omitempty"`
 	Hosts         []string           `json:"hosts,omitempty"`
 	LogCollectors []LogCollectorSpec `json:"logCollectors,omitempty"`
+	Deps          []string           `json:"deps,omitempty"`
 	WorkDir       string             `json:"workDir,omitempty"`
 	InstanceNum   int                `json:"instanceNum,omitempty"`
 	UnitType      string             `json:"unitType,omitempty"`

@@ -551,3 +551,75 @@ func TestServices(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, expectedRet, info)
 }
+
+func TestUpdateService(t *testing.T) {
+	expectedUrl := "/v3/stacks/stack/services/service"
+	expectedMethod := "POST"
+	expectedBody := `{"manualUpdate":false,"metadata":["a=a1","b=b2"],"spec":{"command":[],"entryPoint":[],"envs":[],"hosts":[],"logCollectors":[],"gpuUUIDs":[],"autoRestart":"always","image":"testimage","stopGraceSec":1,"workDir":"testdir","unitType":"testunittype"},"updateParallelism":2}`
+
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, expectedUrl, r.URL.Path)
+		assert.Equal(t, expectedMethod, r.Method)
+		body, err := ioutil.ReadAll(r.Body)
+		assert.NoError(t, err)
+		assert.Equal(t, expectedBody, string(body))
+		fmt.Fprintln(w, "")
+	}))
+	defer ts.Close()
+
+	client := NewQcosClient(QcosConfig{
+		Host: ts.URL,
+	})
+
+	args := UpdateServiceArgs{
+		ManualUpdate: false,
+		Metadata:     []string{"a=a1", "b=b2"},
+		Spec: ServiceSpec{
+			AutoRestart:   "always",
+			Command:       []string{},
+			EntryPoint:    []string{},
+			Envs:          []string{},
+			Hosts:         []string{},
+			Image:         "testimage",
+			LogCollectors: []LogCollectorSpec{},
+			StopGraceSec:  1,
+			WorkDir:       "testdir",
+			UnitType:      "testunittype",
+			GpuUUIDs:      []string{},
+		},
+		UpdateParallelism: 2,
+	}
+
+	err := client.UpdateService(context.TODO(), "stack", "service", args)
+	assert.NoError(t, err)
+}
+
+func TestUpdateJob(t *testing.T) {
+	expectedUrl := "/v3/jobs/default"
+	expectedMethod := "POST"
+	expectedBody := `{"metadata":[],"runAt":"testrunat","timeout":3000,"mode":"testmode"}`
+
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, expectedUrl, r.URL.Path)
+		assert.Equal(t, expectedMethod, r.Method)
+		body, err := ioutil.ReadAll(r.Body)
+		assert.NoError(t, err)
+		assert.Equal(t, expectedBody, string(body))
+		fmt.Fprintln(w, "")
+	}))
+	defer ts.Close()
+
+	client := NewQcosClient(QcosConfig{
+		Host: ts.URL,
+	})
+
+	args := UpdateJobArgs{
+		Spec:     map[string]JobTaskSpec{},
+		Metadata: []string{},
+		RunAt:    "testrunat",
+		Timeout:  3000,
+		Mode:     "testmode",
+	}
+	err := client.UpdateJob(context.TODO(), "default", args)
+	assert.NoError(t, err)
+}
