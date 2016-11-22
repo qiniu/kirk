@@ -669,6 +669,7 @@ type JobTaskSpec struct {
 	Envs          []string           `json:"envs,omitempty"`
 	Hosts         []string           `json:"hosts,omitempty"`
 	LogCollectors []LogCollectorSpec `json:"logCollectors,omitempty"`
+	Deps          []string           `json:"deps,omitempty"`
 	WorkDir       string             `json:"workDir,omitempty"`
 	InstanceNum   int                `json:"instanceNum,omitempty"`
 	UnitType      string             `json:"unitType,omitempty"`
