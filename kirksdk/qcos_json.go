@@ -21,7 +21,7 @@ func (p ServiceSpec) MarshalJSON() ([]byte, error) {
 		Envs:          stringS2P(p.Envs),
 		Hosts:         stringS2P(p.Hosts),
 		LogCollectors: logCollectorSpecS2P(p.LogCollectors),
-		Confs:         ConfSpecS2P(p.Confs),
+		Confs:         confSpecS2P(p.Confs),
 		GpuUUIDs:      stringS2P(p.GpuUUIDs),
 		Alias:         (*Alias)(&p),
 	})
@@ -43,7 +43,7 @@ func (p JobTaskSpec) MarshalJSON() ([]byte, error) {
 		Envs:          stringS2P(p.Envs),
 		Hosts:         stringS2P(p.Hosts),
 		LogCollectors: logCollectorSpecS2P(p.LogCollectors),
-		Confs:         ConfSpecS2P(p.Confs),
+		Confs:         confSpecS2P(p.Confs),
 		Alias:         (*Alias)(&p),
 	})
 }
@@ -72,7 +72,7 @@ func (p JobTaskSpecEx) MarshalJSON() ([]byte, error) {
 		*Alias
 	}{
 		LogCollectors: logCollectorSpecS2P(p.LogCollectors),
-		Confs:         ConfSpecS2P(p.Confs),
+		Confs:         confSpecS2P(p.Confs),
 		Command:       stringS2P(p.Command),
 		EntryPoint:    stringS2P(p.EntryPoint),
 		Envs:          stringS2P(p.Envs),
