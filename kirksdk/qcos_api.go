@@ -416,7 +416,7 @@ type ServiceSpecExport struct {
 	Hosts         []string           `json:"hosts"`
 	Image         string             `json:"image"`
 	LogCollectors []LogCollectorSpec `json:"logCollectors"`
-	Confs         []ConfSpec         `json:"confs,omitempty"`
+	Confs         []ConfSpec         `json:"confs"`
 	StopGraceSec  int                `json:"stopGraceSec"`
 	WorkDir       string             `json:"workDir"`
 	UnitType      string             `json:"unitType"`
