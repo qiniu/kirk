@@ -328,6 +328,7 @@ const (
 	ApTypePublicIPStr  = "PUBLIC_IP"
 	ApTypePrivateIPStr = "INTERNAL_IP"
 	ApTypeDomainStr    = "DOMAIN"
+	ApTypeOutwardIPStr = "OUTWARD_IP"
 )
 
 type Status string

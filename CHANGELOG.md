@@ -1,4 +1,5 @@
 # vNext
+- 添加outward IP类型接入点
 
 # Release 1.1.0
 - AccountClient 相关 API 使用 appd V3 接口
