@@ -228,6 +228,22 @@ type QcosClient interface {
 	DeleteApPortRange(
 		ctx context.Context, apid string, fromPort string, toPort string) (err error)
 
+	// POST /v3/aps/<apid>/<port>/enable
+	EnableApPort(
+		ctx context.Context, apid string, port string) (err error)
+
+	// POST /v3/aps/<apid>/<port>/disable
+	DisableApPort(
+		ctx context.Context, apid string, port string) (err error)
+
+	// POST /v3/aps/<apid>/portrange/<from>/<to>/enable
+	EnableApPortRange(
+		ctx context.Context, apid string, fromPort string, toPort string) (err error)
+
+	// POST /v3/aps/<apid>/portrange/<from>/<to>/disable
+	DisableApPortRange(
+		ctx context.Context, apid string, fromPort string, toPort string) (err error)
+
 	// DELETE /v3/aps/<apid>
 	DeleteAp(ctx context.Context, apid string) (err error)
 
@@ -584,6 +600,7 @@ type ApPortInfo struct {
 	SessionTmoSec   int               `json:"sessionTimeoutSec"`
 	ProxyOpts       ApProxyOpts       `json:"proxyOptions"`
 	HealthCheckOpts ApHealthCheckOpts `json:"healthCheck"`
+	Enabled         bool              `json:"enabled"`
 	CreatedAt       time.Time         `json:"createdAt"`
 	UpdatedAt       time.Time         `json:"updatedAt"`
 	Backends        []struct {
