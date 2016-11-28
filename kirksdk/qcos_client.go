@@ -1273,6 +1273,13 @@ func (p *qcosClientImp) GetConfigServiceSpec(ctx context.Context, namespace stri
 	return
 }
 
+// POST /v3/configservices/<namespace>
+func (p *qcosClientImp) UpdateConfigServiceSpec(ctx context.Context, args UpdateConfigServiceSpecArgs) (err error) {
+	url := fmt.Sprintf("%s/v3/configservices/%s", p.host, namespace)
+	err = p.client.CallWithJson(ctx, nil, "POST", url, args)
+	return
+}
+
 func (p *qcosClientImp) wait4StackRunning(stackName string, timeout time.Duration) (err error) {
 	if stackName == "" {
 		stackName = DefaultStack

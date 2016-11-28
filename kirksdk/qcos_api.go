@@ -311,6 +311,9 @@ type QcosClient interface {
 
 	// GET /v3/configservices/<namespace>
 	GetConfigServiceSpec(ctx context.Context, namespace string) (ret ConfigServiceSpecInfo, err error)
+
+	// POST /v3/configservices/<namespace>
+	UpdateConfigServiceSpec(ctx context.Context, namespace string, args UpdateConfigServiceSpecArgs) (err error)
 }
 
 const (
@@ -886,3 +889,8 @@ type CreateConfigServiceSpecArgs struct {
 }
 
 type ConfigServiceSpecInfo CreateConfigServiceSpecArgs
+
+type UpdateConfigServiceSpecArgs struct {
+	Vars     map[string]interface{}   `json:"vars"`
+	Listvars []map[string]interface{} `json:"listvars"`
+}
