@@ -1274,7 +1274,7 @@ func (p *qcosClientImp) GetConfigServiceSpec(ctx context.Context, namespace stri
 }
 
 // POST /v3/configservices/<namespace>
-func (p *qcosClientImp) UpdateConfigServiceSpec(ctx context.Context, args UpdateConfigServiceSpecArgs) (err error) {
+func (p *qcosClientImp) UpdateConfigServiceSpec(ctx context.Context, namespace string, args UpdateConfigServiceSpecArgs) (err error) {
 	url := fmt.Sprintf("%s/v3/configservices/%s", p.host, namespace)
 	err = p.client.CallWithJson(ctx, nil, "POST", url, args)
 	return
