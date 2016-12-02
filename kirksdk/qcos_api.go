@@ -404,6 +404,7 @@ type ServiceInfo struct {
 	UpdatingProgress  int               `json:"updatingProgress"`
 	CreatedAt         time.Time         `json:"createdAt"`
 	UpdatedAt         time.Time         `json:"updatedAt"`
+	ApPorts           []ServiceApPort   `json:"apPorts"`
 }
 
 type ServiceExportInfo struct {
@@ -539,6 +540,19 @@ type ResizeContainerExecTermArgs struct {
 
 type StartContainerExecArgs struct {
 	Mode string `json:"mode"`
+}
+
+// AP ports related to a service.
+type ServiceApPort struct {
+	ApID         string   `json:"apId"`
+	Type         string   `json:"type"`
+	IP           string   `json:"ip,omitempty"`
+	Domain       string   `json:"domain,omitempty"`
+	UserDomains  []string `json:"userDomains,omitempty"`
+	FrontendPort string   `json:"frontendPort"`
+	BackendPort  string   `json:"backendPort"`
+	Proto        string   `json:"proto"`
+	Enabled      bool     `json:"enabled"`
 }
 
 type CreateApArgs struct {
