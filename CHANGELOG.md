@@ -1,6 +1,7 @@
 # vNext
-- 为 Service 以及 Job 增加 Confs 域
-- 增加 ConfigService 相关 V3 接口
+- 添加outward IP类型接入点
+- 添加禁用/启用AP端口的API，并在查看/搜索AP的API返回的端口信息中返回端口的启用状态（启用/禁用）。
+- 查看服务时，给出与该服务关联的AP端口信息。
 - 为indexd列举tag增加分页接口
 
 # Release 1.1.0
