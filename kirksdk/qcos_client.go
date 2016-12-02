@@ -1284,6 +1284,34 @@ func (p *qcosClientImp) GetContainerAlert(ctx context.Context, ip string, level 
 	return
 }
 
+// GET /v3/configservices
+func (p *qcosClientImp) ListConfigServiceSpecs(ctx context.Context) (ret []ConfigServiceSpecInfo, err error) {
+	url := fmt.Sprintf("%s/v3/configservices", p.host)
+	err = p.client.Call(ctx, &ret, "GET", url)
+	return
+}
+
+// POST /v3/configservices
+func (p *qcosClientImp) CreateConfigServiceSpec(ctx context.Context, args CreateConfigServiceSpecArgs) (err error) {
+	url := fmt.Sprintf("%s/v3/configservices", p.host)
+	err = p.client.CallWithJson(ctx, nil, "POST", url, args)
+	return
+}
+
+// GET /v3/configservices/<namespace>
+func (p *qcosClientImp) GetConfigServiceSpec(ctx context.Context, namespace string) (ret ConfigServiceSpecInfo, err error) {
+	url := fmt.Sprintf("%s/v3/configservices/%s", p.host, namespace)
+	err = p.client.Call(ctx, &ret, "GET", url)
+	return
+}
+
+// POST /v3/configservices/<namespace>
+func (p *qcosClientImp) UpdateConfigServiceSpec(ctx context.Context, namespace string, args UpdateConfigServiceSpecArgs) (err error) {
+	url := fmt.Sprintf("%s/v3/configservices/%s", p.host, namespace)
+	err = p.client.CallWithJson(ctx, nil, "POST", url, args)
+	return
+}
+
 func (p *qcosClientImp) wait4StackRunning(stackName string, timeout time.Duration) (err error) {
 	if stackName == "" {
 		stackName = DefaultStack
