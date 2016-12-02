@@ -49,7 +49,7 @@ func (p *indexClientImp) ListRepoTags(ctx context.Context, username, repo string
 
 func (p *indexClientImp) ListRepoTagsPage(ctx context.Context, username, repo string, start, size int) (tags []*Tag, err error) {
 	err = p.Client.Call(ctx, &tags, "GET", fmt.Sprintf("%s/api/%s/%s/tags?start=%d&size=%d",
-		p.Config.Host, username, repo, start, size))
+		p.Host, username, repo, start, size))
 	return
 }
 
