@@ -318,6 +318,18 @@ type QcosClient interface {
 
 	// GET /v3/alert/containers/<ip>?level=<level>
 	GetContainerAlert(ctx context.Context, ip string, level string) (ret []ContainerAlertInfo, err error)
+
+	// GET /v3/configservices
+	ListConfigServiceSpecs(ctx context.Context) (ret []ConfigServiceSpecInfo, err error)
+
+	// POST /v3/configservices
+	CreateConfigServiceSpec(ctx context.Context, args CreateConfigServiceSpecArgs) (err error)
+
+	// GET /v3/configservices/<namespace>
+	GetConfigServiceSpec(ctx context.Context, namespace string) (ret ConfigServiceSpecInfo, err error)
+
+	// POST /v3/configservices/<namespace>
+	UpdateConfigServiceSpec(ctx context.Context, namespace string, args UpdateConfigServiceSpecArgs) (err error)
 }
 
 const (
@@ -425,6 +437,7 @@ type ServiceSpecExport struct {
 	Hosts         []string           `json:"hosts"`
 	Image         string             `json:"image"`
 	LogCollectors []LogCollectorSpec `json:"logCollectors"`
+	Confs         []ConfSpec         `json:"confs"`
 	StopGraceSec  int                `json:"stopGraceSec"`
 	WorkDir       string             `json:"workDir"`
 	UnitType      string             `json:"unitType"`
@@ -439,10 +452,16 @@ type ServiceSpec struct {
 	Hosts         []string           `json:"hosts,omitempty"`
 	Image         string             `json:"image,omitempty"`
 	LogCollectors []LogCollectorSpec `json:"logCollectors,omitempty"`
+	Confs         []ConfSpec         `json:"confs,omitempty"`
 	StopGraceSec  int                `json:"stopGraceSec,omitempty"`
 	WorkDir       string             `json:"workDir,omitempty"`
 	UnitType      string             `json:"unitType,omitempty"`
 	GpuUUIDs      []string           `json:"gpuUUIDs,omitempty"` // do not use. prepare for gpu service
+}
+
+type ConfSpec struct {
+	Namespace string   `json:"namespace"`
+	Files     []string `json:"files"`
 }
 
 type LogCollectorSpec struct {
@@ -749,6 +768,7 @@ type JobTaskSpec struct {
 	Envs          []string           `json:"envs,omitempty"`
 	Hosts         []string           `json:"hosts,omitempty"`
 	LogCollectors []LogCollectorSpec `json:"logCollectors,omitempty"`
+	Confs         []ConfSpec         `json:"confs,omitempty"`
 	Deps          []string           `json:"deps,omitempty"`
 	WorkDir       string             `json:"workDir,omitempty"`
 	InstanceNum   int                `json:"instanceNum,omitempty"`
@@ -802,6 +822,7 @@ type JobInstanceID struct {
 type JobTaskSpecEx struct {
 	WorkDir       string             `json:"workDir,omitempty"`
 	LogCollectors []LogCollectorSpec `json:"logCollectors,omitempty"`
+	Confs         []ConfSpec         `json:"confs,omitempty"`
 	Command       []string           `json:"command,omitempty"`
 	EntryPoint    []string           `json:"entryPoint,omitempty"`
 	Envs          []string           `json:"envs,omitempty"`
@@ -891,4 +912,17 @@ type ContainerAlertInfo struct {
 	Level     string                   `json:"level"`
 	Threshold *AlertContainerThreshold `json:"threshold"`
 	Methods   []*AlertMethod           `json:"methods"`
+}
+
+type CreateConfigServiceSpecArgs struct {
+	Namespace string                   `json:"namespace"`
+	Vars      map[string]interface{}   `json:"vars"`
+	Listvars  []map[string]interface{} `json:"listvars"`
+}
+
+type ConfigServiceSpecInfo CreateConfigServiceSpecArgs
+
+type UpdateConfigServiceSpecArgs struct {
+	Vars     map[string]interface{}   `json:"vars"`
+	Listvars []map[string]interface{} `json:"listvars"`
 }
