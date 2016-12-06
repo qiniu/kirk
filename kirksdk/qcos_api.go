@@ -330,6 +330,9 @@ type QcosClient interface {
 
 	// POST /v3/configservices/<namespace>
 	UpdateConfigServiceSpec(ctx context.Context, namespace string, args UpdateConfigServiceSpecArgs) (err error)
+
+	// DELETE /v3/configservices/<namespace>
+	DeleteConfigServiceSpec(ctx context.Context, namespace string) (err error)
 }
 
 const (
