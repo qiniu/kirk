@@ -1312,6 +1312,13 @@ func (p *qcosClientImp) UpdateConfigServiceSpec(ctx context.Context, namespace s
 	return
 }
 
+// DELETE /v3/configservices/<namespace>
+func (p *qcosClientImp) DeleteConfigServiceSpec(ctx context.Context, namespace string) (err error) {
+	url := fmt.Sprintf("%s/v3/configservices/%s", p.host, namespace)
+	err = p.client.Call(ctx, nil, "DELETE", url)
+	return
+}
+
 func (p *qcosClientImp) wait4StackRunning(stackName string, timeout time.Duration) (err error) {
 	if stackName == "" {
 		stackName = DefaultStack
