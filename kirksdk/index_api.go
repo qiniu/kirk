@@ -36,7 +36,8 @@ type Repo struct {
 }
 
 type Tag struct {
-	Name string `json:"name"`
+	Name    string    `json:"name"`
+	Created time.Time `json:"created"`
 }
 
 type ImageConfig struct {
