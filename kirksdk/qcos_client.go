@@ -1065,6 +1065,38 @@ func (p *qcosClientImp) DeleteApPortRange(
 	return
 }
 
+// POST /v3/aps/<apid>/<port>/enable
+func (p *qcosClientImp) EnableApPort(
+	ctx context.Context, apid string, port string) (err error) {
+	url := fmt.Sprintf("%s/v3/aps/%s/%s/enable", p.host, apid, port)
+	err = p.client.CallWithJson(ctx, nil, "POST", url, nil)
+	return
+}
+
+// POST /v3/aps/<apid>/<port>/disable
+func (p *qcosClientImp) DisableApPort(
+	ctx context.Context, apid string, port string) (err error) {
+	url := fmt.Sprintf("%s/v3/aps/%s/%s/disable", p.host, apid, port)
+	err = p.client.CallWithJson(ctx, nil, "POST", url, nil)
+	return
+}
+
+// POST /v3/aps/<apid>/portrange/<from>/<to>/enable
+func (p *qcosClientImp) EnableApPortRange(
+	ctx context.Context, apid string, fromPort string, toPort string) (err error) {
+	url := fmt.Sprintf("%s/v3/aps/%s/portrange/%s/%s/enable", p.host, apid, fromPort, toPort)
+	err = p.client.CallWithJson(ctx, nil, "POST", url, nil)
+	return
+}
+
+// POST /v3/aps/<apid>/portrange/<from>/<to>/disable
+func (p *qcosClientImp) DisableApPortRange(
+	ctx context.Context, apid string, fromPort string, toPort string) (err error) {
+	url := fmt.Sprintf("%s/v3/aps/%s/portrange/%s/%s/disable", p.host, apid, fromPort, toPort)
+	err = p.client.CallWithJson(ctx, nil, "POST", url, nil)
+	return
+}
+
 // GET  /v3/aps/<apid>/<port>/healthcheck
 func (p *qcosClientImp) GetHealthcheck(ctx context.Context, apid string, port string) (ret map[string]string, err error) {
 	url := fmt.Sprintf("%s/v3/aps/%s/%s/healthcheck", p.host, apid, port)
@@ -1277,6 +1309,13 @@ func (p *qcosClientImp) GetConfigServiceSpec(ctx context.Context, namespace stri
 func (p *qcosClientImp) UpdateConfigServiceSpec(ctx context.Context, namespace string, args UpdateConfigServiceSpecArgs) (err error) {
 	url := fmt.Sprintf("%s/v3/configservices/%s", p.host, namespace)
 	err = p.client.CallWithJson(ctx, nil, "POST", url, args)
+	return
+}
+
+// DELETE /v3/configservices/<namespace>
+func (p *qcosClientImp) DeleteConfigServiceSpec(ctx context.Context, namespace string) (err error) {
+	url := fmt.Sprintf("%s/v3/configservices/%s", p.host, namespace)
+	err = p.client.Call(ctx, nil, "DELETE", url)
 	return
 }
 

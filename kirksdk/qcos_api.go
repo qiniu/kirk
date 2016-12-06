@@ -228,6 +228,22 @@ type QcosClient interface {
 	DeleteApPortRange(
 		ctx context.Context, apid string, fromPort string, toPort string) (err error)
 
+	// POST /v3/aps/<apid>/<port>/enable
+	EnableApPort(
+		ctx context.Context, apid string, port string) (err error)
+
+	// POST /v3/aps/<apid>/<port>/disable
+	DisableApPort(
+		ctx context.Context, apid string, port string) (err error)
+
+	// POST /v3/aps/<apid>/portrange/<from>/<to>/enable
+	EnableApPortRange(
+		ctx context.Context, apid string, fromPort string, toPort string) (err error)
+
+	// POST /v3/aps/<apid>/portrange/<from>/<to>/disable
+	DisableApPortRange(
+		ctx context.Context, apid string, fromPort string, toPort string) (err error)
+
 	// DELETE /v3/aps/<apid>
 	DeleteAp(ctx context.Context, apid string) (err error)
 
@@ -314,6 +330,9 @@ type QcosClient interface {
 
 	// POST /v3/configservices/<namespace>
 	UpdateConfigServiceSpec(ctx context.Context, namespace string, args UpdateConfigServiceSpecArgs) (err error)
+
+	// DELETE /v3/configservices/<namespace>
+	DeleteConfigServiceSpec(ctx context.Context, namespace string) (err error)
 }
 
 const (
@@ -340,6 +359,7 @@ const (
 	ApTypePublicIPStr  = "PUBLIC_IP"
 	ApTypePrivateIPStr = "INTERNAL_IP"
 	ApTypeDomainStr    = "DOMAIN"
+	ApTypeOutwardIPStr = "OUTWARD_IP"
 )
 
 type Status string
@@ -399,6 +419,7 @@ type ServiceInfo struct {
 	UpdatingProgress  int               `json:"updatingProgress"`
 	CreatedAt         time.Time         `json:"createdAt"`
 	UpdatedAt         time.Time         `json:"updatedAt"`
+	ApPorts           []ServiceApPort   `json:"apPorts"`
 }
 
 type ServiceExportInfo struct {
@@ -543,6 +564,19 @@ type StartContainerExecArgs struct {
 	Mode string `json:"mode"`
 }
 
+// AP ports related to a service.
+type ServiceApPort struct {
+	ApID         string   `json:"apId"`
+	Type         string   `json:"type"`
+	IP           string   `json:"ip,omitempty"`
+	Domain       string   `json:"domain,omitempty"`
+	UserDomains  []string `json:"userDomains,omitempty"`
+	FrontendPort string   `json:"frontendPort"`
+	BackendPort  string   `json:"backendPort"`
+	Proto        string   `json:"proto"`
+	Enabled      bool     `json:"enabled"`
+}
+
 type CreateApArgs struct {
 	Type      string `json:"type"`
 	Provider  string `json:"provider"`
@@ -602,6 +636,7 @@ type ApPortInfo struct {
 	SessionTmoSec   int               `json:"sessionTimeoutSec"`
 	ProxyOpts       ApProxyOpts       `json:"proxyOptions"`
 	HealthCheckOpts ApHealthCheckOpts `json:"healthCheck"`
+	Enabled         bool              `json:"enabled"`
 	CreatedAt       time.Time         `json:"createdAt"`
 	UpdatedAt       time.Time         `json:"updatedAt"`
 	Backends        []struct {
