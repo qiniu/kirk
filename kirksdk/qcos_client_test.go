@@ -248,6 +248,18 @@ func TestServicesInspect(t *testing.T) {
 				Name:      "v2",
 			},
 		},
+		ApPorts: []ServiceApPort{
+			ServiceApPort{
+				ApID:         "1000001",
+				Type:         "DOMAIN",
+				Domain:       "abcd1234",
+				UserDomains:  []string{"www.aa.com"},
+				FrontendPort: "80",
+				BackendPort:  "8080",
+				Proto:        "HTTP",
+				Enabled:      true,
+			},
+		},
 	}
 	ret := `{
     "containerIps": [
@@ -350,7 +362,17 @@ func TestServicesInspect(t *testing.T) {
             "name": "v2",
 			"unitType": "SSD1_16G"
         }
-    ]
+    ],
+    "apPorts": [{
+    	"apId": "1000001",
+    	"type": "DOMAIN",
+    	"domain": "abcd1234",
+    	"userDomains": ["www.aa.com"],
+    	"frontendPort": "80",
+    	"backendPort": "8080",
+    	"proto": "HTTP",
+    	"enabled": true
+    	}]
 }`
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(t, expectedUrl, r.URL.Path)
