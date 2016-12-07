@@ -344,7 +344,8 @@ const (
 
 const (
 	StateCreate         = State("CREATING")
-	StateScaling        = State("SCALING")
+	StateScalingUp      = State("SCALING-UP")
+	StateScalingDown    = State("SCALING-DOWN")
 	StateAutoUpdating   = State("AUTO-UPDATING")
 	StateManualUpdating = State("MANUAL-UPDATING")
 	StateStarting       = State("STARTING")
