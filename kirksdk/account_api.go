@@ -80,6 +80,21 @@ type AccountClient interface {
 
 	// GetQcosClient 用于得到与某个 App 交互的 QcosClient
 	GetQcosClient(ctx context.Context, appURI string) (client QcosClient, err error)
+
+	// CreateAppGrant 将应用授权给用户
+	CreateAppGrant(ctx context.Context, appURI, username string) (err error)
+
+	// DeleteAppGrant 删除应用授权
+	DeleteAppGrant(ctx context.Context, appURI, username string) (err error)
+
+	// ListAppGrantedUsers 列出应用已授权的用户列表
+	ListAppGrantedUsers(ctx context.Context, appURI string) (ret []AppGrantedUser, err error)
+
+	// ListGrantedApps 列出已被授权的应用
+	ListGrantedApps(ctx context.Context) (ret []AppInfo, err error)
+
+	// GetGrantedAppKey 获取被授权应用的key
+	GetGrantedAppKey(ctx context.Context, appURI string) (ret GrantedAppKey, err error)
 }
 
 // AccountConfig 包含创建 AccountClient 所需的信息
@@ -177,4 +192,16 @@ type UpdateAlertMethodArgs struct {
 	Mobile      string `json:"mobile"`
 	Nationality string `json:"nationality"`
 	Code        string `json:"code"`
+}
+
+// AppGrantedUser 包含列出应用被授权的用户信息
+type AppGrantedUser struct {
+	ID   uint32 `json:"id"`
+	Name string `json:"name"`
+}
+
+// GrantedAppKey 包含被授权应用的key信息
+type GrantedAppKey struct {
+	Ak string `json:"ak"`
+	Sk string `json:"sk"`
 }
