@@ -133,6 +133,36 @@ func (p *accountClientImp) UpdateAlertMethod(ctx context.Context, appURI string,
 	return
 }
 
+func (p *accountClientImp) CreateAppGrant(ctx context.Context, appURI, username string) (err error) {
+	url := fmt.Sprintf("%s%s/apps/%s/grant/%s", p.host, appVersionPrefix, appURI, username)
+	err = p.client.Call(ctx, nil, "PUT", url)
+	return
+}
+
+func (p *accountClientImp) DeleteAppGrant(ctx context.Context, appURI, username string) (err error) {
+	url := fmt.Sprintf("%s%s/apps/%s/grant/%s", p.host, appVersionPrefix, appURI, username)
+	err = p.client.Call(ctx, nil, "DELETE", url)
+	return
+}
+
+func (p *accountClientImp) ListAppGrantedUsers(ctx context.Context, appURI string) (ret []AppGrantedUser, err error) {
+	url := fmt.Sprintf("%s%s/apps/%s/grants", p.host, appVersionPrefix, appURI)
+	err = p.client.Call(ctx, &ret, "GET", url)
+	return
+}
+
+func (p *accountClientImp) ListGrantedApps(ctx context.Context) (ret []AppInfo, err error) {
+	url := fmt.Sprintf("%s%s/granted", p.host, appVersionPrefix)
+	err = p.client.Call(ctx, &ret, "GET", url)
+	return
+}
+
+func (p *accountClientImp) GetGrantedAppKey(ctx context.Context, appURI string) (ret GrantedAppKey, err error) {
+	url := fmt.Sprintf("%s%s/granted/%s/key", p.host, appVersionPrefix, appURI)
+	err = p.client.Call(ctx, &ret, "GET", url)
+	return
+}
+
 func (p *accountClientImp) GetIndexClient(ctx context.Context) (client IndexClient, err error) {
 	accountInfo, err := p.GetAccountInfo(ctx)
 	if err != nil {
