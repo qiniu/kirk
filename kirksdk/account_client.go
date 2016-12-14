@@ -229,11 +229,11 @@ func (p *accountClientImp) GetQcosClient(ctx context.Context, appURI string) (cl
 	}
 
 	getGrantedAppKeyFunc := func() (result keyResult) {
-		keypair, err := p.GetGrantedAppKey(ctx, appURI)
+		keyPair, err := p.GetGrantedAppKey(ctx, appURI)
 		result.err = err
 		if err == nil {
-			result.ak = keypair.Ak
-			result.sk = keypair.Sk
+			result.ak = keyPair.Ak
+			result.sk = keyPair.Sk
 		}
 		return
 	}
