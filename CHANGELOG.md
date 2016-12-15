@@ -1,8 +1,6 @@
 # vNext
-- Service SCALING 状态拆分为 SCALING-UP SCALING-DOWN
-
-# Release 1.2.1
 - 新增app授权和撤销授权功能
+- Service SCALING 状态拆分为 SCALING-UP SCALING-DOWN
 
 # Release 1.2.0
 - 添加禁用/启用AP端口的API，并在查看/搜索AP的API返回的端口信息中返回端口的启用状态（启用/禁用）。
