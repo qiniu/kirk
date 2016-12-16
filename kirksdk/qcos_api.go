@@ -344,7 +344,8 @@ const (
 
 const (
 	StateCreate         = State("CREATING")
-	StateScaling        = State("SCALING")
+	StateScalingUp      = State("SCALING-UP")
+	StateScalingDown    = State("SCALING-DOWN")
 	StateAutoUpdating   = State("AUTO-UPDATING")
 	StateManualUpdating = State("MANUAL-UPDATING")
 	StateStarting       = State("STARTING")
@@ -748,12 +749,13 @@ type LogsSearchResult struct {
 }
 
 type Hit struct {
-	Log         string    `json:"log"`
-	CollectedAt time.Time `json:"collectedAt"`
-	PodIP       string    `json:"podIp"`
-	ProcessName string    `json:"processName"`
-	GateID      string    `json:"gateId"`
-	Domain      string    `json:"domain"`
+	Log             string    `json:"log"`
+	CollectedAt     time.Time `json:"collectedAt"`
+	CollectedAtNano int64     `json:"collectedAtNano"`
+	PodIP           string    `json:"podIp"`
+	ProcessName     string    `json:"processName"`
+	GateID          string    `json:"gateId"`
+	Domain          string    `json:"domain"`
 }
 
 var (
