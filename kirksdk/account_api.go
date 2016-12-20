@@ -95,6 +95,24 @@ type AccountClient interface {
 
 	// GetGrantedAppKey 获取被授权应用的key
 	GetGrantedAppKey(ctx context.Context, appURI string) (ret GrantedAppKey, err error)
+
+	// GetAppspecs 获得应用模板信息
+	GetAppspecs(ctx context.Context, specURI string) (ret SpecInfo, err error)
+
+	// ListPublicspecs 列出公开应用的模板
+	ListPublicspecs(ctx context.Context) (ret []SpecInfo, err error)
+
+	// ListTrialspecs 列出被授权应用的模板
+	ListTrialspecs(ctx context.Context) (ret []SpecInfo, err error)
+
+	// GetVendorManagedAppStatus 获得VendorManaged应用运行状态
+	GetVendorManagedAppStatus(ctx context.Context, appURI string) (ret VendorManagedAppStatus, err error)
+
+	// GetVendorManagedAppEntry 获得VendorManaged应用入口地址
+	GetVendorManagedAppEntry(ctx context.Context, appURI string) (ret VendorManagedAppEntry, err error)
+
+	// VendorManagedAppRepair 尝试修复VendorManaged应用
+	VendorManagedAppRepair(ctx context.Context, appURI string) (err error)
 }
 
 // AccountConfig 包含创建 AccountClient 所需的信息
@@ -204,4 +222,31 @@ type AppGrantedUser struct {
 type GrantedAppKey struct {
 	Ak string `json:"ak"`
 	Sk string `json:"sk"`
+}
+
+// SpecInfo 包含 Spec 的相关信息
+type SpecInfo struct {
+	URI       string    `json:"uri"`
+	Owner     string    `json:"owner"`
+	Title     string    `json:"title"`
+	Ver       uint32    `json:"ver"`
+	Verstr    string    `json:"verstr"`
+	Desc      string    `json:"desc,omitempty"`
+	Brief     string    `json:"brief"`
+	Icon      string    `json:"icon"`
+	Seedimg   string    `json:"seedimg"`
+	Entryport uint16    `json:"entryport"`
+	Ctime     time.Time `json:"ctime"`
+	Mtime     time.Time `json:"mtime"`
+}
+
+// VendorManagedAppStatus 包含应用运行状态信息
+type VendorManagedAppStatus struct {
+	Status  string `json:"status"`
+	Details string `json:"details"`
+}
+
+// VendorManagedAppEntry 包含应用入口地址
+type VendorManagedAppEntry struct {
+	Entry string `json:"entry"`
 }
