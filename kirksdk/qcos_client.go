@@ -1319,6 +1319,13 @@ func (p *qcosClientImp) DeleteConfigServiceSpec(ctx context.Context, namespace s
 	return
 }
 
+// POST /v3/webproxy
+func (p *qcosClientImp) GetWebProxy(ctx context.Context, args GetWebProxyArgs) (ret WebProxyInfo, err error) {
+	url := fmt.Sprintf("%s/v3/webproxy", p.host)
+	err = p.client.CallWithJson(ctx, &ret, "POST", url, args)
+	return
+}
+
 func (p *qcosClientImp) wait4StackRunning(stackName string, timeout time.Duration) (err error) {
 	if stackName == "" {
 		stackName = DefaultStack
