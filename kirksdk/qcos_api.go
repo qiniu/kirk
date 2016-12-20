@@ -333,6 +333,9 @@ type QcosClient interface {
 
 	// DELETE /v3/configservices/<namespace>
 	DeleteConfigServiceSpec(ctx context.Context, namespace string) (err error)
+
+	// POST /v3/webproxy
+	GetWebProxy(ctx context.Context, args GetWebProxyArgs) (ret WebProxyInfo, err error)
 }
 
 const (
@@ -930,4 +933,13 @@ type ConfigServiceSpecInfo CreateConfigServiceSpecArgs
 type UpdateConfigServiceSpecArgs struct {
 	Vars     map[string]interface{}   `json:"vars"`
 	Listvars []map[string]interface{} `json:"listvars"`
+}
+
+type GetWebProxyArgs struct {
+	Backend string `json:"backend"`
+}
+
+type WebProxyInfo struct {
+	Backend    string `json:"backend"`
+	OneTimeURL string `json:"oneTimeUrl"`
 }
