@@ -1,4 +1,6 @@
 # vNext
+
+# Release 2.0.0
 - 新增app授权和撤销授权功能
 - Service SCALING 状态拆分为 SCALING-UP SCALING-DOWN
 - 日志搜索结果添加CollectedAtNano字段 
