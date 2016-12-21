@@ -187,13 +187,13 @@ func (p *accountClientImp) ListGrantedspecs(ctx context.Context) (ret []SpecInfo
 
 func (p *accountClientImp) GetVendorManagedAppStatus(ctx context.Context, appURI string) (ret VendorManagedAppStatus, err error) {
 	url := fmt.Sprintf("%s%s/apps/%s/status", p.host, appVersionPrefix, appURI)
-	err = p.client.Call(ctx, &ret, "GET", url)
+	err = p.client.Call(ctx, &ret, "PUT", url)
 	return
 }
 
 func (p *accountClientImp) GetVendorManagedAppEntry(ctx context.Context, appURI string) (ret VendorManagedAppEntry, err error) {
 	url := fmt.Sprintf("%s%s/apps/%s/entry", p.host, appVersionPrefix, appURI)
-	err = p.client.Call(ctx, &ret, "GET", url)
+	err = p.client.Call(ctx, &ret, "PUT", url)
 	return
 }
 
