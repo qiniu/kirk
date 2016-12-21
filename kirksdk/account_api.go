@@ -102,8 +102,8 @@ type AccountClient interface {
 	// ListPublicspecs 列出公开应用的模板
 	ListPublicspecs(ctx context.Context) (ret []SpecInfo, err error)
 
-	// ListTrialspecs 列出被授权应用的模板
-	ListTrialspecs(ctx context.Context) (ret []SpecInfo, err error)
+	// ListGrantedspecs 列出被授权应用的模板
+	ListGrantedspecs(ctx context.Context) (ret []SpecInfo, err error)
 
 	// GetVendorManagedAppStatus 获得VendorManaged应用运行状态
 	GetVendorManagedAppStatus(ctx context.Context, appURI string) (ret VendorManagedAppStatus, err error)
