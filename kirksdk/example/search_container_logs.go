@@ -11,6 +11,11 @@ import (
 	"qiniupkg.com/kirk/kirksdk"
 )
 
+// A simple example of how to use the sdk to search logs, including container logs and access logs.
+// In addition, this example shows how to search more than 10,000 logs in a single search.
+// Because the logs search api limits the maximum search size as 10,000, so we will use the field
+// collectedAtNano to achieve this goal.
+
 func SearchContainerLogsExample() {
 	client := kirksdk.NewQcosClient(kirksdk.QcosConfig{
 		AccessKey: "test_fake_ak",
@@ -31,6 +36,7 @@ func SearchContainerLogs(client kirksdk.QcosClient, repoType, queryString string
 	}
 
 	var query string
+	// query is a string template, but not the final query string in SearchContainerLogsArgs
 	if tail {
 		query = addClause(query, fmt.Sprintf("collectedAtNano:[%d TO %%d]", fromTime.UnixNano()))
 	} else {
@@ -124,6 +130,7 @@ func formatLogs(hits []kirksdk.Hit, repoType string) (logs []string) {
 	logs = make([]string, 0)
 	for _, hit := range hits {
 		if repoType == "access" {
+			// access log does not have log field, so we need to format access log by using other fields
 			log = formatAccessLogField(hit)
 		} else {
 			log = hit.Log
