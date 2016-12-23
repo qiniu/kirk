@@ -753,21 +753,21 @@ type LogsSearchResult struct {
 
 type Hit struct {
 	CollectedAt     time.Time `json:"collectedAt" repo:"pod,access"`
-	CollectedAtNano int64     `json:"collectedAtNano" repo:"pod,access"`
-	Host            string    `json:"host" repo:"pod,access"`
+	CollectedAtNano int64     `json:"collectedAtNano"`
+	Host            string    `json:"host"`
 
 	Log           string `json:"log" repo:"pod"`
 	Path          string `json:"path" repo:"pod"`
 	Pattern       string `json:"pattern" repo:"pod"`
-	ContainerId   string `json:"containerId" repo:"pod"`
-	ContainerName string `json:"containerName" repo:"pod"`
+	ContainerId   string `json:"containerId"`
+	ContainerName string `json:"containerName"`
 	JobInstance   string `json:"jobInstance" repo:"pod"`
 	JobTask       string `json:"jobTask" repo:"pod"`
 	PodIp         string `json:"podIp" repo:"pod"`
 	PodName       string `json:"podName" repo:"pod"`
-	PodVer        string `json:"podVer" repo:"pod"`
-	ProcessName   string `json:"processName" repo:"pod"`
-	Sip           string `json:"sip" repo:"pod"`
+	PodVer        string `json:"podVer"`
+	ProcessName   string `json:"processName"`
+	Sip           string `json:"sip"`
 	Source        string `json:"source" repo:"pod"`
 
 	Type           string    `json:"type" repo:"access"`
