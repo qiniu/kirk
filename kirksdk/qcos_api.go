@@ -752,13 +752,38 @@ type LogsSearchResult struct {
 }
 
 type Hit struct {
-	Log             string    `json:"log"`
-	CollectedAt     time.Time `json:"collectedAt"`
-	CollectedAtNano int64     `json:"collectedAtNano"`
-	PodIP           string    `json:"podIp"`
-	ProcessName     string    `json:"processName"`
-	GateID          string    `json:"gateId"`
-	Domain          string    `json:"domain"`
+	CollectedAt     time.Time `json:"collectedAt" repo:"pod,access"`
+	CollectedAtNano int64     `json:"collectedAtNano" repo:"pod,access"`
+	Host            string    `json:"host" repo:"pod,access"`
+
+	Log           string `json:"log" repo:"pod"`
+	Path          string `json:"path" repo:"pod"`
+	Pattern       string `json:"pattern" repo:"pod"`
+	ContainerId   string `json:"containerId" repo:"pod"`
+	ContainerName string `json:"containerName" repo:"pod"`
+	JobInstance   string `json:"jobInstance" repo:"pod"`
+	JobTask       string `json:"jobTask" repo:"pod"`
+	PodIp         string `json:"podIp" repo:"pod"`
+	PodName       string `json:"podName" repo:"pod"`
+	PodVer        string `json:"podVer" repo:"pod"`
+	ProcessName   string `json:"processName" repo:"pod"`
+	Sip           string `json:"sip" repo:"pod"`
+	Source        string `json:"source" repo:"pod"`
+
+	Type           string    `json:"type" repo:"access"`
+	RequestApp     string    `json:"requestApp" repo:"access"`
+	GateId         string    `json:"gateId" repo:"access"`
+	StartAt        time.Time `json:"startAt" repo:"access"`
+	Method         string    `json:"method" repo:"access"`
+	Url            string    `json:"url" repo:"access"`
+	ReqId          string    `json:"reqId" repo:"access"`
+	StatusCode     int64     `json:"statusCode" repo:"access"`
+	ElapsedNano    int64     `json:"elapsedNano" repo:"access"`
+	RequestHeader  string    `json:"requestHeader" repo:"access"`
+	RequestParams  string    `json:"requestParams" repo:"access"`
+	RequestBody    string    `json:"requestBody" repo:"access"`
+	ResponseHeader string    `json:"responseHeader" repo:"access"`
+	ResponseBody   string    `json:"responseBody" repo:"access"`
 }
 
 var (
