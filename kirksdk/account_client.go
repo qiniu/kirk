@@ -167,6 +167,42 @@ func (p *accountClientImp) GetGrantedAppKey(ctx context.Context, appURI string) 
 	return
 }
 
+func (p *accountClientImp) GetAppspecs(ctx context.Context, specURI string) (ret SpecInfo, err error) {
+	url := fmt.Sprintf("%s%s/appspecs/%s", p.host, appVersionPrefix, specURI)
+	err = p.client.Call(ctx, &ret, "GET", url)
+	return
+}
+
+func (p *accountClientImp) ListPublicspecs(ctx context.Context) (ret []SpecInfo, err error) {
+	url := fmt.Sprintf("%s%s/publicspecs", p.host, appVersionPrefix)
+	err = p.client.Call(ctx, &ret, "GET", url)
+	return
+}
+
+func (p *accountClientImp) ListGrantedspecs(ctx context.Context) (ret []SpecInfo, err error) {
+	url := fmt.Sprintf("%s%s/grantedspecs", p.host, appVersionPrefix)
+	err = p.client.Call(ctx, &ret, "GET", url)
+	return
+}
+
+func (p *accountClientImp) GetVendorManagedAppStatus(ctx context.Context, appURI string) (ret VendorManagedAppStatus, err error) {
+	url := fmt.Sprintf("%s%s/apps/%s/status", p.host, appVersionPrefix, appURI)
+	err = p.client.Call(ctx, &ret, "PUT", url)
+	return
+}
+
+func (p *accountClientImp) GetVendorManagedAppEntry(ctx context.Context, appURI string) (ret VendorManagedAppEntry, err error) {
+	url := fmt.Sprintf("%s%s/apps/%s/entry", p.host, appVersionPrefix, appURI)
+	err = p.client.Call(ctx, &ret, "PUT", url)
+	return
+}
+
+func (p *accountClientImp) VendorManagedAppRepair(ctx context.Context, appURI string) (err error) {
+	url := fmt.Sprintf("%s%s/apps/%s/repair", p.host, appVersionPrefix, appURI)
+	err = p.client.Call(ctx, nil, "PUT", url)
+	return
+}
+
 func (p *accountClientImp) GetIndexClient(ctx context.Context) (client IndexClient, err error) {
 	accountInfo, err := p.GetAccountInfo(ctx)
 	if err != nil {
