@@ -243,7 +243,7 @@ type SpecInfo struct {
 // VendorManagedAppStatus 包含应用运行状态信息
 type VendorManagedAppStatus struct {
 	Status  string `json:"status"`
-	Message string `json:"details"`
+	Message string `json:"message"`
 }
 
 // VendorManagedAppEntry 包含应用入口地址
