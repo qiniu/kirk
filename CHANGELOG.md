@@ -1,4 +1,5 @@
 # vNext
+- vendorManaged 应用状态的responce 改details为message
 
 # 2.1.0
 - 新增应用平台user权限的接口
