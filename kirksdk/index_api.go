@@ -37,8 +37,9 @@ type Repo struct {
 }
 
 type Tag struct {
-	Name    string    `json:"name"`
-	Created time.Time `json:"created"`
+	Name    string      `json:"name"`
+	Created time.Time   `json:"created"`
+	Detail  ImageConfig `json:"detail"`
 }
 
 type ImageConfig struct {
@@ -48,6 +49,7 @@ type ImageConfig struct {
 	Config          map[string]interface{} `json:"config"`
 	ContainerConfig map[string]interface{} `json:"container_config"`
 	Created         time.Time              `json:"created"`
+	Size            int64                  `json:"size"`
 }
 
 type Digest string
