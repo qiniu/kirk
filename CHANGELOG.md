@@ -1,5 +1,6 @@
 # vNext
 - vendorManaged 应用状态的response 改details为message
+- spec和app添加Privileges字段
 
 # 2.1.0
 - 新增应用平台user权限的接口
