@@ -127,10 +127,11 @@ type AccountConfig struct {
 
 // CreateAppArgs 包含创建一个 App 所需的信息
 type CreateAppArgs struct {
-	Title   string `json:"title"`
-	Region  string `json:"region"`
-	SpecURI string `json:"specUri"`
-	SpecVer uint32 `json:"specVer"`
+	Title      string   `json:"title"`
+	Region     string   `json:"region"`
+	SpecURI    string   `json:"specUri"`
+	SpecVer    uint32   `json:"specVer"`
+	Privileges []string `json:"privileges"`
 }
 
 // AccountInfo 包含 Account 的相关信息
@@ -153,6 +154,7 @@ type AppInfo struct {
 	RunMode          string    `json:"runMode,omitempty"`
 	CreationTime     time.Time `json:"ctime"`
 	ModificationTime time.Time `json:"mtime"`
+	Privileges       []string  `json:"privileges,omitempty"`
 	AppExtendedInfo
 }
 
@@ -226,18 +228,19 @@ type GrantedAppKey struct {
 
 // SpecInfo 包含 Spec 的相关信息
 type SpecInfo struct {
-	URI       string    `json:"uri"`
-	Owner     string    `json:"owner"`
-	Title     string    `json:"title"`
-	Ver       uint32    `json:"ver"`
-	Verstr    string    `json:"verstr"`
-	Desc      string    `json:"desc,omitempty"`
-	Brief     string    `json:"brief"`
-	Icon      string    `json:"icon"`
-	Seedimg   string    `json:"seedimg"`
-	Entryport uint16    `json:"entryport"`
-	Ctime     time.Time `json:"ctime"`
-	Mtime     time.Time `json:"mtime"`
+	URI        string    `json:"uri"`
+	Owner      string    `json:"owner"`
+	Title      string    `json:"title"`
+	Ver        uint32    `json:"ver"`
+	Verstr     string    `json:"verstr"`
+	Desc       string    `json:"desc,omitempty"`
+	Brief      string    `json:"brief"`
+	Icon       string    `json:"icon"`
+	Seedimg    string    `json:"seedimg"`
+	Entryport  uint16    `json:"entryport"`
+	Privileges []string  `json:"privileges"`
+	Ctime      time.Time `json:"ctime"`
+	Mtime      time.Time `json:"mtime"`
 }
 
 // VendorManagedAppStatus 包含应用运行状态信息
