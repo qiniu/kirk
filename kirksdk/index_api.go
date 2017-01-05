@@ -14,6 +14,7 @@ type IndexAuthClient interface {
 type IndexClient interface {
 	ListRepo(ctx context.Context, username string) (repos []*Repo, err error)
 	ListRepoTags(ctx context.Context, username, repo string) (tags []*Tag, err error)
+	ListRepoTagsPage(ctx context.Context, username, repo string, start, size int) (tags []*Tag, err error)
 	GetImageConfig(ctx context.Context, username, repo, reference string) (res *ImageConfig, err error)
 	DeleteRepoTag(ctx context.Context, username, repo, reference string) error
 	CreateTagFromRepo(ctx context.Context, username, repo, tag string, from *ImageSpec) (result *ImageSpec, err error)

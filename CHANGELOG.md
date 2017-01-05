@@ -1,7 +1,23 @@
 # vNext
+- vendorManaged 应用状态的response 改details为message
+
+# 2.1.0
+- 新增应用平台user权限的接口
+- 修改日志搜索返回结果字段及其Tag
+
+# Release 2.0.0
+- 新增app授权和撤销授权功能
+- Service SCALING 状态拆分为 SCALING-UP SCALING-DOWN
+- 日志搜索结果添加CollectedAtNano字段
+- 添加 GetWebProxy 方法
+
+# Release 1.2.0
+- 添加禁用/启用AP端口的API，并在查看/搜索AP的API返回的端口信息中返回端口的启用状态（启用/禁用）。
+- 查看服务时，给出与该服务关联的AP端口信息。
 - 为 Service 以及 Job 增加 Confs 域
 - 增加 ConfigService 相关 V3 接口
 - ListRepoTags和GetImageConfig 支持获取imagesize
+- 为 index 列取tag 接口增加排序，分页和时间参数
 
 # Release 1.1.0
 - AccountClient 相关 API 使用 appd V3 接口

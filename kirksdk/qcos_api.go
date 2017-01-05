@@ -228,6 +228,22 @@ type QcosClient interface {
 	DeleteApPortRange(
 		ctx context.Context, apid string, fromPort string, toPort string) (err error)
 
+	// POST /v3/aps/<apid>/<port>/enable
+	EnableApPort(
+		ctx context.Context, apid string, port string) (err error)
+
+	// POST /v3/aps/<apid>/<port>/disable
+	DisableApPort(
+		ctx context.Context, apid string, port string) (err error)
+
+	// POST /v3/aps/<apid>/portrange/<from>/<to>/enable
+	EnableApPortRange(
+		ctx context.Context, apid string, fromPort string, toPort string) (err error)
+
+	// POST /v3/aps/<apid>/portrange/<from>/<to>/disable
+	DisableApPortRange(
+		ctx context.Context, apid string, fromPort string, toPort string) (err error)
+
 	// DELETE /v3/aps/<apid>
 	DeleteAp(ctx context.Context, apid string) (err error)
 
@@ -314,6 +330,12 @@ type QcosClient interface {
 
 	// POST /v3/configservices/<namespace>
 	UpdateConfigServiceSpec(ctx context.Context, namespace string, args UpdateConfigServiceSpecArgs) (err error)
+
+	// DELETE /v3/configservices/<namespace>
+	DeleteConfigServiceSpec(ctx context.Context, namespace string) (err error)
+
+	// POST /v3/webproxy
+	GetWebProxy(ctx context.Context, args GetWebProxyArgs) (ret WebProxyInfo, err error)
 }
 
 const (
@@ -325,7 +347,8 @@ const (
 
 const (
 	StateCreate         = State("CREATING")
-	StateScaling        = State("SCALING")
+	StateScalingUp      = State("SCALING-UP")
+	StateScalingDown    = State("SCALING-DOWN")
 	StateAutoUpdating   = State("AUTO-UPDATING")
 	StateManualUpdating = State("MANUAL-UPDATING")
 	StateStarting       = State("STARTING")
@@ -340,6 +363,7 @@ const (
 	ApTypePublicIPStr  = "PUBLIC_IP"
 	ApTypePrivateIPStr = "INTERNAL_IP"
 	ApTypeDomainStr    = "DOMAIN"
+	ApTypeOutwardIPStr = "OUTWARD_IP"
 )
 
 type Status string
@@ -399,6 +423,7 @@ type ServiceInfo struct {
 	UpdatingProgress  int               `json:"updatingProgress"`
 	CreatedAt         time.Time         `json:"createdAt"`
 	UpdatedAt         time.Time         `json:"updatedAt"`
+	ApPorts           []ServiceApPort   `json:"apPorts"`
 }
 
 type ServiceExportInfo struct {
@@ -543,6 +568,19 @@ type StartContainerExecArgs struct {
 	Mode string `json:"mode"`
 }
 
+// AP ports related to a service.
+type ServiceApPort struct {
+	ApID         string   `json:"apId"`
+	Type         string   `json:"type"`
+	IP           string   `json:"ip,omitempty"`
+	Domain       string   `json:"domain,omitempty"`
+	UserDomains  []string `json:"userDomains,omitempty"`
+	FrontendPort string   `json:"frontendPort"`
+	BackendPort  string   `json:"backendPort"`
+	Proto        string   `json:"proto"`
+	Enabled      bool     `json:"enabled"`
+}
+
 type CreateApArgs struct {
 	Type      string `json:"type"`
 	Provider  string `json:"provider"`
@@ -602,6 +640,7 @@ type ApPortInfo struct {
 	SessionTmoSec   int               `json:"sessionTimeoutSec"`
 	ProxyOpts       ApProxyOpts       `json:"proxyOptions"`
 	HealthCheckOpts ApHealthCheckOpts `json:"healthCheck"`
+	Enabled         bool              `json:"enabled"`
 	CreatedAt       time.Time         `json:"createdAt"`
 	UpdatedAt       time.Time         `json:"updatedAt"`
 	Backends        []struct {
@@ -713,12 +752,38 @@ type LogsSearchResult struct {
 }
 
 type Hit struct {
-	Log         string    `json:"log"`
-	CollectedAt time.Time `json:"collectedAt"`
-	PodIP       string    `json:"podIp"`
-	ProcessName string    `json:"processName"`
-	GateID      string    `json:"gateId"`
-	Domain      string    `json:"domain"`
+	CollectedAt     time.Time `json:"collectedAt" repo:"pod,access"`
+	CollectedAtNano int64     `json:"collectedAtNano"`
+	Host            string    `json:"host"`
+
+	Log           string `json:"log" repo:"pod"`
+	Path          string `json:"path" repo:"pod"`
+	Pattern       string `json:"pattern" repo:"pod"`
+	ContainerId   string `json:"containerId"`
+	ContainerName string `json:"containerName"`
+	JobInstance   string `json:"jobInstance" repo:"pod"`
+	JobTask       string `json:"jobTask" repo:"pod"`
+	PodIp         string `json:"podIp" repo:"pod"`
+	PodName       string `json:"podName" repo:"pod"`
+	PodVer        string `json:"podVer"`
+	ProcessName   string `json:"processName"`
+	Sip           string `json:"sip"`
+	Source        string `json:"source" repo:"pod"`
+
+	Type           string    `json:"type" repo:"access"`
+	RequestApp     string    `json:"requestApp" repo:"access"`
+	GateId         string    `json:"gateId" repo:"access"`
+	StartAt        time.Time `json:"startAt" repo:"access"`
+	Method         string    `json:"method" repo:"access"`
+	Url            string    `json:"url" repo:"access"`
+	ReqId          string    `json:"reqId" repo:"access"`
+	StatusCode     int64     `json:"statusCode" repo:"access"`
+	ElapsedNano    int64     `json:"elapsedNano" repo:"access"`
+	RequestHeader  string    `json:"requestHeader" repo:"access"`
+	RequestParams  string    `json:"requestParams" repo:"access"`
+	RequestBody    string    `json:"requestBody" repo:"access"`
+	ResponseHeader string    `json:"responseHeader" repo:"access"`
+	ResponseBody   string    `json:"responseBody" repo:"access"`
 }
 
 var (
@@ -893,4 +958,13 @@ type ConfigServiceSpecInfo CreateConfigServiceSpecArgs
 type UpdateConfigServiceSpecArgs struct {
 	Vars     map[string]interface{}   `json:"vars"`
 	Listvars []map[string]interface{} `json:"listvars"`
+}
+
+type GetWebProxyArgs struct {
+	Backend string `json:"backend"`
+}
+
+type WebProxyInfo struct {
+	Backend    string `json:"backend"`
+	OneTimeURL string `json:"oneTimeUrl"`
 }

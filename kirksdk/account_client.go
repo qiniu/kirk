@@ -1,8 +1,10 @@
 package kirksdk
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"golang.org/x/net/context"
 	"qiniupkg.com/kirk/kirksdk/mac"
@@ -10,6 +12,8 @@ import (
 )
 
 const appVersionPrefix = "/v3"
+
+var ErrInvalidAppURI = errors.New("app uri is invalid")
 
 type accountClientImp struct {
 	accessKey string
@@ -133,6 +137,72 @@ func (p *accountClientImp) UpdateAlertMethod(ctx context.Context, appURI string,
 	return
 }
 
+func (p *accountClientImp) CreateAppGrant(ctx context.Context, appURI, username string) (err error) {
+	url := fmt.Sprintf("%s%s/apps/%s/grants/%s", p.host, appVersionPrefix, appURI, username)
+	err = p.client.Call(ctx, nil, "PUT", url)
+	return
+}
+
+func (p *accountClientImp) DeleteAppGrant(ctx context.Context, appURI, username string) (err error) {
+	url := fmt.Sprintf("%s%s/apps/%s/grants/%s", p.host, appVersionPrefix, appURI, username)
+	err = p.client.Call(ctx, nil, "DELETE", url)
+	return
+}
+
+func (p *accountClientImp) ListAppGrantedUsers(ctx context.Context, appURI string) (ret []AppGrantedUser, err error) {
+	url := fmt.Sprintf("%s%s/apps/%s/grants", p.host, appVersionPrefix, appURI)
+	err = p.client.Call(ctx, &ret, "GET", url)
+	return
+}
+
+func (p *accountClientImp) ListGrantedApps(ctx context.Context) (ret []AppInfo, err error) {
+	url := fmt.Sprintf("%s%s/granted", p.host, appVersionPrefix)
+	err = p.client.Call(ctx, &ret, "GET", url)
+	return
+}
+
+func (p *accountClientImp) GetGrantedAppKey(ctx context.Context, appURI string) (ret GrantedAppKey, err error) {
+	url := fmt.Sprintf("%s%s/granted/%s/key", p.host, appVersionPrefix, appURI)
+	err = p.client.Call(ctx, &ret, "GET", url)
+	return
+}
+
+func (p *accountClientImp) GetAppspecs(ctx context.Context, specURI string) (ret SpecInfo, err error) {
+	url := fmt.Sprintf("%s%s/appspecs/%s", p.host, appVersionPrefix, specURI)
+	err = p.client.Call(ctx, &ret, "GET", url)
+	return
+}
+
+func (p *accountClientImp) ListPublicspecs(ctx context.Context) (ret []SpecInfo, err error) {
+	url := fmt.Sprintf("%s%s/publicspecs", p.host, appVersionPrefix)
+	err = p.client.Call(ctx, &ret, "GET", url)
+	return
+}
+
+func (p *accountClientImp) ListGrantedspecs(ctx context.Context) (ret []SpecInfo, err error) {
+	url := fmt.Sprintf("%s%s/grantedspecs", p.host, appVersionPrefix)
+	err = p.client.Call(ctx, &ret, "GET", url)
+	return
+}
+
+func (p *accountClientImp) GetVendorManagedAppStatus(ctx context.Context, appURI string) (ret VendorManagedAppStatus, err error) {
+	url := fmt.Sprintf("%s%s/apps/%s/status", p.host, appVersionPrefix, appURI)
+	err = p.client.Call(ctx, &ret, "PUT", url)
+	return
+}
+
+func (p *accountClientImp) GetVendorManagedAppEntry(ctx context.Context, appURI string) (ret VendorManagedAppEntry, err error) {
+	url := fmt.Sprintf("%s%s/apps/%s/entry", p.host, appVersionPrefix, appURI)
+	err = p.client.Call(ctx, &ret, "PUT", url)
+	return
+}
+
+func (p *accountClientImp) VendorManagedAppRepair(ctx context.Context, appURI string) (err error) {
+	url := fmt.Sprintf("%s%s/apps/%s/repair", p.host, appVersionPrefix, appURI)
+	err = p.client.Call(ctx, nil, "PUT", url)
+	return
+}
+
 func (p *accountClientImp) GetIndexClient(ctx context.Context) (client IndexClient, err error) {
 	accountInfo, err := p.GetAccountInfo(ctx)
 	if err != nil {
@@ -163,12 +233,21 @@ func (p *accountClientImp) GetQcosClient(ctx context.Context, appURI string) (cl
 		err      error
 	}
 
-	keyChan := make(chan keyResult)
-	endpointChan := make(chan endpointResult)
+	// app uri should follow the format: "username.appname"
+	// or it will return an invalid app uri
+	appURIParts := strings.Split(appURI, ".")
+	if len(appURIParts) < 2 {
+		return nil, ErrInvalidAppURI
+	}
 
-	// Get app access key & secret key
-	go func() {
-		var result keyResult
+	// check if app is granted
+	accountInfo, err := p.GetAccountInfo(ctx)
+	if err != nil {
+		return
+	}
+	isGranted := (accountInfo.Name != appURIParts[0])
+
+	getAppKeyFunc := func() (result keyResult) {
 		keyPairs, err := p.GetAppKeys(ctx, appURI)
 		if err != nil {
 			result.err = err
@@ -182,6 +261,33 @@ func (p *accountClientImp) GetQcosClient(ctx context.Context, appURI string) (cl
 				}
 			}
 		}
+		return
+	}
+
+	getGrantedAppKeyFunc := func() (result keyResult) {
+		keyPair, err := p.GetGrantedAppKey(ctx, appURI)
+		result.err = err
+		if err == nil {
+			result.ak = keyPair.Ak
+			result.sk = keyPair.Sk
+		}
+		return
+	}
+
+	// set up list apps and get key func
+	listAppsFunc := p.ListApps
+	getKeyFunc := getAppKeyFunc
+	if isGranted {
+		listAppsFunc = p.ListGrantedApps
+		getKeyFunc = getGrantedAppKeyFunc
+	}
+
+	keyChan := make(chan keyResult)
+	endpointChan := make(chan endpointResult)
+
+	// Get app access key & secret key
+	go func() {
+		result := getKeyFunc()
 
 		if result.ak == "" {
 			result.err = fmt.Errorf("Fail to find keys for app \"%s\"", appURI)
@@ -190,10 +296,10 @@ func (p *accountClientImp) GetQcosClient(ctx context.Context, appURI string) (cl
 		keyChan <- result
 	}()
 
-	// Get qocos end point
+	// Get qcos end point
 	go func() {
 		var result endpointResult
-		appInfos, err := p.ListApps(ctx)
+		appInfos, err := listAppsFunc(ctx)
 		if err != nil {
 			result.err = err
 			endpointChan <- result
