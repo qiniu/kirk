@@ -1,5 +1,6 @@
 # vNext
 - vendorManaged 应用状态的response 改details为message
+- ListRepoTags和GetImageConfig 支持获取imagesize
 
 # 2.1.0
 - 新增应用平台user权限的接口
@@ -16,7 +17,6 @@
 - 查看服务时，给出与该服务关联的AP端口信息。
 - 为 Service 以及 Job 增加 Confs 域
 - 增加 ConfigService 相关 V3 接口
-- ListRepoTags和GetImageConfig 支持获取imagesize
 - 为 index 列取tag 接口增加排序，分页和时间参数
 
 # Release 1.1.0
