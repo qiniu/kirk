@@ -16,6 +16,7 @@ const appVersionPrefix = "/v3"
 var ErrInvalidAppURI = errors.New("app uri is invalid")
 
 type accountClientImp struct {
+	config    AccountConfig
 	accessKey string
 	secretKey string
 	host      string
@@ -27,6 +28,7 @@ type accountClientImp struct {
 func NewAccountClient(cfg AccountConfig) AccountClient {
 
 	p := new(accountClientImp)
+	p.config = cfg
 	p.host = cleanHost(cfg.Host)
 	p.transport = cfg.Transport
 	p.userAgent = cfg.UserAgent
@@ -42,6 +44,10 @@ func NewAccountClient(cfg AccountConfig) AccountClient {
 	}
 
 	return p
+}
+
+func (p *accountClientImp) GetConfig() (ret AccountConfig) {
+	return p.config
 }
 
 func (p *accountClientImp) GetAccountInfo(ctx context.Context) (ret AccountInfo, err error) {
@@ -289,7 +295,7 @@ func (p *accountClientImp) GetQcosClient(ctx context.Context, appURI string) (cl
 	go func() {
 		result := getKeyFunc()
 
-		if result.ak == "" {
+		if result.ak == "" && result.err == nil {
 			result.err = fmt.Errorf("Fail to find keys for app \"%s\"", appURI)
 		}
 

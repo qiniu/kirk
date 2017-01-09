@@ -13,6 +13,19 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestQcosGetConfig(t *testing.T) {
+	config := QcosConfig{
+		AccessKey: "ak",
+		SecretKey: "sk",
+		Host:      "https://test.url",
+		UserAgent: "ua",
+		Transport: http.DefaultTransport,
+	}
+
+	client := NewQcosClient(config)
+	assert.EqualValues(t, config, client.GetConfig())
+}
+
 func TestStacks(t *testing.T) {
 	expectedUrl := "/v3/stacks"
 	expectedMethod := "GET"

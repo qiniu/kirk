@@ -37,6 +37,7 @@ type QcosConfig struct {
 }
 
 type qcosClientImp struct {
+	config QcosConfig
 	host   string
 	logger *logrus.Logger
 	client rpc.Client
@@ -46,6 +47,7 @@ type qcosClientImp struct {
 func NewQcosClient(cfg QcosConfig) QcosClient {
 
 	p := new(qcosClientImp)
+	p.config = cfg
 
 	p.host = cleanHost(cfg.Host)
 
@@ -64,6 +66,10 @@ func NewQcosClient(cfg QcosConfig) QcosClient {
 	}
 
 	return p
+}
+
+func (p *qcosClientImp) GetConfig() (ret QcosConfig) {
+	return p.config
 }
 
 // GET /v3/stacks
