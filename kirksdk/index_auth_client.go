@@ -19,6 +19,7 @@ type IndexAuthConfig struct {
 }
 
 type indexAuthClientImp struct {
+	config IndexAuthConfig
 	Host   string
 	client rpc.Client
 }
@@ -26,7 +27,7 @@ type indexAuthClientImp struct {
 func NewIndexAuthClient(cfg IndexAuthConfig) IndexAuthClient {
 
 	p := new(indexAuthClientImp)
-
+	p.config = cfg
 	p.Host = cleanHost(cfg.Host)
 
 	cfg.Transport = newKirksdkTransport(cfg.UserAgent, cfg.Transport)
@@ -39,6 +40,10 @@ func NewIndexAuthClient(cfg IndexAuthConfig) IndexAuthClient {
 	}
 
 	return p
+}
+
+func (p *indexAuthClientImp) GetConfig() (ret IndexAuthConfig) {
+	return p.config
 }
 
 func (p *indexAuthClientImp) RequestAuthToken(ctx context.Context, scopes []string) (AuthToken, error) {

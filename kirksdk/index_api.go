@@ -8,10 +8,12 @@ import (
 )
 
 type IndexAuthClient interface {
+	GetConfig() (ret IndexAuthConfig)
 	RequestAuthToken(ctx context.Context, scopes []string) (AuthToken, error)
 }
 
 type IndexClient interface {
+	GetConfig() (ret IndexConfig)
 	ListRepo(ctx context.Context, username string) (repos []*Repo, err error)
 	ListRepoTags(ctx context.Context, username, repo string) (tags []*Tag, err error)
 	ListRepoTagsPage(ctx context.Context, username, repo string, start, size int) (tags []*Tag, err error)

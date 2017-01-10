@@ -9,6 +9,8 @@ import (
 )
 
 type QcosClient interface {
+	GetConfig() (ret QcosConfig)
+
 	// GET /v3/stacks
 	ListStacks(ctx context.Context) (ret []StackInfo, err error)
 

@@ -20,6 +20,7 @@ type IndexConfig struct {
 }
 
 type indexClientImp struct {
+	config IndexConfig
 	host   string
 	client rpc.Client
 }
@@ -27,6 +28,7 @@ type indexClientImp struct {
 func NewIndexClient(cfg IndexConfig) IndexClient {
 
 	p := new(indexClientImp)
+	p.config = cfg
 	cfg.Host = cleanHost(cfg.Host)
 	p.host = cfg.Host
 
@@ -35,6 +37,10 @@ func NewIndexClient(cfg IndexConfig) IndexClient {
 	p.client = rpc.Client{&http.Client{Transport: newAuthTokenTransport(cfg)}}
 
 	return p
+}
+
+func (p *indexClientImp) GetConfig() (ret IndexConfig) {
+	return p.config
 }
 
 func (p *indexClientImp) ListRepo(ctx context.Context, username string) (repos []*Repo, err error) {

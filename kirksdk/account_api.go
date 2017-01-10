@@ -32,6 +32,8 @@ const (
 
 // AccountClient 包含针对账号 REST API 的各项操作
 type AccountClient interface {
+	// GetConfig 返回用于创建本 Client 实例的 AccountConfig
+	GetConfig() (ret AccountConfig)
 
 	// GetAccountInfo 用于得到 Account 的相关信息
 	GetAccountInfo(ctx context.Context) (ret AccountInfo, err error)
