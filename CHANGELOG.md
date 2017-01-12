@@ -1,6 +1,12 @@
 # vNext
 
-# 2.1.0
+# Release 2.2.0
+- vendorManaged 应用状态的response 改details为message
+- ListRepoTags和GetImageConfig 支持获取imagesize
+- spec和app添加Privileges字段
+- 为各个 Client 接口添加 GetConfig 方法
+
+# Release 2.1.0
 - 新增应用平台user权限的接口
 - 修改日志搜索返回结果字段及其Tag
 
