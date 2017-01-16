@@ -95,6 +95,9 @@ type AccountClient interface {
 
 	// GetGrantedAppKey 获取被授权应用的key
 	GetGrantedAppKey(ctx context.Context, appURI string) (ret GrantedAppKey, err error)
+
+	// ListGrants 获取自己授权给别人的应用列表
+	ListGrants(ctx context.Context) (ret []GrantInfo, err error)
 }
 
 // AccountConfig 包含创建 AccountClient 所需的信息
@@ -204,4 +207,11 @@ type AppGrantedUser struct {
 type GrantedAppKey struct {
 	Ak string `json:"ak"`
 	Sk string `json:"sk"`
+}
+
+// GrantInfo 应用授权信息
+type GrantInfo struct {
+	Account   string    `json:"account"`
+	AppURI    string    `json:"appuri"`
+	CreatedAt time.Time `json:"ctime"`
 }
