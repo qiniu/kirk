@@ -1,6 +1,20 @@
 # vNext
+
+# Release 2.2.0
+- vendorManaged 应用状态的response 改details为message
+- ListRepoTags和GetImageConfig 支持获取imagesize
+- spec和app添加Privileges字段
+- 为各个 Client 接口添加 GetConfig 方法
+
+# Release 2.1.0
+- 新增应用平台user权限的接口
+- 修改日志搜索返回结果字段及其Tag
+
+# Release 2.0.0
 - 新增app授权和撤销授权功能
 - Service SCALING 状态拆分为 SCALING-UP SCALING-DOWN
+- 日志搜索结果添加CollectedAtNano字段
+- 添加 GetWebProxy 方法
 
 # Release 1.2.0
 - 添加禁用/启用AP端口的API，并在查看/搜索AP的API返回的端口信息中返回端口的启用状态（启用/禁用）。

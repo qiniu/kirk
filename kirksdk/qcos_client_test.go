@@ -13,6 +13,19 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestQcosGetConfig(t *testing.T) {
+	config := QcosConfig{
+		AccessKey: "ak",
+		SecretKey: "sk",
+		Host:      "https://test.url",
+		UserAgent: "ua",
+		Transport: http.DefaultTransport,
+	}
+
+	client := NewQcosClient(config)
+	assert.EqualValues(t, config, client.GetConfig())
+}
+
 func TestStacks(t *testing.T) {
 	expectedUrl := "/v3/stacks"
 	expectedMethod := "GET"
@@ -644,4 +657,37 @@ func TestUpdateJob(t *testing.T) {
 	}
 	err := client.UpdateJob(context.TODO(), "default", args)
 	assert.NoError(t, err)
+}
+
+func TestGetWebproxy(t *testing.T) {
+	expectedUrl := "/v3/webproxy"
+	expectedMethod := "POST"
+	expectedBody := `{"backend":"10.128.0.1:8080"}`
+	returnBody := `{
+    "backend": "10.128.0.1:8080",
+    "oneTimeUrl": "http://dummy.com"
+}`
+
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, expectedUrl, r.URL.Path)
+		assert.Equal(t, expectedMethod, r.Method)
+		body, err := ioutil.ReadAll(r.Body)
+		assert.NoError(t, err)
+		assert.Equal(t, expectedBody, string(body))
+		fmt.Fprintln(w, returnBody)
+	}))
+	defer ts.Close()
+
+	client := NewQcosClient(QcosConfig{
+		Host: ts.URL,
+	})
+
+	args := GetWebProxyArgs{
+		Backend: "10.128.0.1:8080",
+	}
+
+	webproxy, err := client.GetWebProxy(context.TODO(), args)
+	assert.NoError(t, err)
+	assert.Equal(t, "10.128.0.1:8080", webproxy.Backend)
+	assert.Equal(t, "http://dummy.com", webproxy.OneTimeURL)
 }

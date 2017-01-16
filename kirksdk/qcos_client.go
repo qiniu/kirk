@@ -37,6 +37,7 @@ type QcosConfig struct {
 }
 
 type qcosClientImp struct {
+	config QcosConfig
 	host   string
 	logger *logrus.Logger
 	client rpc.Client
@@ -46,6 +47,7 @@ type qcosClientImp struct {
 func NewQcosClient(cfg QcosConfig) QcosClient {
 
 	p := new(qcosClientImp)
+	p.config = cfg
 
 	p.host = cleanHost(cfg.Host)
 
@@ -64,6 +66,10 @@ func NewQcosClient(cfg QcosConfig) QcosClient {
 	}
 
 	return p
+}
+
+func (p *qcosClientImp) GetConfig() (ret QcosConfig) {
+	return p.config
 }
 
 // GET /v3/stacks
@@ -1316,6 +1322,13 @@ func (p *qcosClientImp) UpdateConfigServiceSpec(ctx context.Context, namespace s
 func (p *qcosClientImp) DeleteConfigServiceSpec(ctx context.Context, namespace string) (err error) {
 	url := fmt.Sprintf("%s/v3/configservices/%s", p.host, namespace)
 	err = p.client.Call(ctx, nil, "DELETE", url)
+	return
+}
+
+// POST /v3/webproxy
+func (p *qcosClientImp) GetWebProxy(ctx context.Context, args GetWebProxyArgs) (ret WebProxyInfo, err error) {
+	url := fmt.Sprintf("%s/v3/webproxy", p.host)
+	err = p.client.CallWithJson(ctx, &ret, "POST", url, args)
 	return
 }
 

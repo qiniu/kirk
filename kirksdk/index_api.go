@@ -8,10 +8,12 @@ import (
 )
 
 type IndexAuthClient interface {
+	GetConfig() (ret IndexAuthConfig)
 	RequestAuthToken(ctx context.Context, scopes []string) (AuthToken, error)
 }
 
 type IndexClient interface {
+	GetConfig() (ret IndexConfig)
 	ListRepo(ctx context.Context, username string) (repos []*Repo, err error)
 	ListRepoTags(ctx context.Context, username, repo string) (tags []*Tag, err error)
 	ListRepoTagsPage(ctx context.Context, username, repo string, start, size int) (tags []*Tag, err error)
@@ -37,8 +39,9 @@ type Repo struct {
 }
 
 type Tag struct {
-	Name    string    `json:"name"`
-	Created time.Time `json:"created"`
+	Name    string      `json:"name"`
+	Created time.Time   `json:"created"`
+	Detail  ImageConfig `json:"detail"`
 }
 
 type ImageConfig struct {
@@ -48,6 +51,7 @@ type ImageConfig struct {
 	Config          map[string]interface{} `json:"config"`
 	ContainerConfig map[string]interface{} `json:"container_config"`
 	Created         time.Time              `json:"created"`
+	Size            int64                  `json:"size"`
 }
 
 type Digest string

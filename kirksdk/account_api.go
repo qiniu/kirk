@@ -32,6 +32,8 @@ const (
 
 // AccountClient 包含针对账号 REST API 的各项操作
 type AccountClient interface {
+	// GetConfig 返回用于创建本 Client 实例的 AccountConfig
+	GetConfig() (ret AccountConfig)
 
 	// GetAccountInfo 用于得到 Account 的相关信息
 	GetAccountInfo(ctx context.Context) (ret AccountInfo, err error)
@@ -98,6 +100,24 @@ type AccountClient interface {
 
 	// ListGrants 获取自己授权给别人的应用列表
 	ListGrants(ctx context.Context) (ret []GrantInfo, err error)
+
+	// GetAppspecs 获得应用模板信息
+	GetAppspecs(ctx context.Context, specURI string) (ret SpecInfo, err error)
+
+	// ListPublicspecs 列出公开应用的模板
+	ListPublicspecs(ctx context.Context) (ret []SpecInfo, err error)
+
+	// ListGrantedspecs 列出被授权应用的模板
+	ListGrantedspecs(ctx context.Context) (ret []SpecInfo, err error)
+
+	// GetVendorManagedAppStatus 获得VendorManaged应用运行状态
+	GetVendorManagedAppStatus(ctx context.Context, appURI string) (ret VendorManagedAppStatus, err error)
+
+	// GetVendorManagedAppEntry 获得VendorManaged应用入口地址
+	GetVendorManagedAppEntry(ctx context.Context, appURI string) (ret VendorManagedAppEntry, err error)
+
+	// VendorManagedAppRepair 尝试修复VendorManaged应用
+	VendorManagedAppRepair(ctx context.Context, appURI string) (err error)
 }
 
 // AccountConfig 包含创建 AccountClient 所需的信息
@@ -112,10 +132,11 @@ type AccountConfig struct {
 
 // CreateAppArgs 包含创建一个 App 所需的信息
 type CreateAppArgs struct {
-	Title   string `json:"title"`
-	Region  string `json:"region"`
-	SpecURI string `json:"specUri"`
-	SpecVer uint32 `json:"specVer"`
+	Title      string   `json:"title"`
+	Region     string   `json:"region"`
+	SpecURI    string   `json:"specUri"`
+	SpecVer    uint32   `json:"specVer"`
+	Privileges []string `json:"privileges"`
 }
 
 // AccountInfo 包含 Account 的相关信息
@@ -138,6 +159,7 @@ type AppInfo struct {
 	RunMode          string    `json:"runMode,omitempty"`
 	CreationTime     time.Time `json:"ctime"`
 	ModificationTime time.Time `json:"mtime"`
+	Privileges       []string  `json:"privileges,omitempty"`
 	AppExtendedInfo
 }
 
@@ -214,4 +236,32 @@ type GrantInfo struct {
 	Account   string    `json:"account"`
 	AppURI    string    `json:"appuri"`
 	CreatedAt time.Time `json:"ctime"`
+}
+
+// SpecInfo 包含 Spec 的相关信息
+type SpecInfo struct {
+	URI        string    `json:"uri"`
+	Owner      string    `json:"owner"`
+	Title      string    `json:"title"`
+	Ver        uint32    `json:"ver"`
+	Verstr     string    `json:"verstr"`
+	Desc       string    `json:"desc,omitempty"`
+	Brief      string    `json:"brief"`
+	Icon       string    `json:"icon"`
+	Seedimg    string    `json:"seedimg"`
+	Entryport  uint16    `json:"entryport"`
+	Privileges []string  `json:"privileges"`
+	Ctime      time.Time `json:"ctime"`
+	Mtime      time.Time `json:"mtime"`
+}
+
+// VendorManagedAppStatus 包含应用运行状态信息
+type VendorManagedAppStatus struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+}
+
+// VendorManagedAppEntry 包含应用入口地址
+type VendorManagedAppEntry struct {
+	Entry string `json:"entry"`
 }
