@@ -241,6 +241,7 @@ type SpecInfo struct {
 	Seedimg    string    `json:"seedimg"`
 	Entryport  uint16    `json:"entryport"`
 	Privileges []string  `json:"privileges"`
+	Regions    []string  `json:"regions"`
 	Ctime      time.Time `json:"ctime"`
 	Mtime      time.Time `json:"mtime"`
 }
