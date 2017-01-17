@@ -1,4 +1,5 @@
 # vNext
+- SpecInfo 添加 Regions 字段
 
 # Release 2.2.0
 - vendorManaged 应用状态的response 改details为message
