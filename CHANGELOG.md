@@ -1,5 +1,9 @@
 # vNext
 
+# Release 2.3.0
+- SpecInfo 添加 Regions 字段
+- 增加 list grants 接口
+
 # Release 2.2.0
 - vendorManaged 应用状态的response 改details为message
 - ListRepoTags和GetImageConfig 支持获取imagesize

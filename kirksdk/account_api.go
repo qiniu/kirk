@@ -98,6 +98,9 @@ type AccountClient interface {
 	// GetGrantedAppKey 获取被授权应用的key
 	GetGrantedAppKey(ctx context.Context, appURI string) (ret GrantedAppKey, err error)
 
+	// ListGrants 获取自己授权给别人的应用列表
+	ListGrants(ctx context.Context) (ret []GrantInfo, err error)
+
 	// GetAppspecs 获得应用模板信息
 	GetAppspecs(ctx context.Context, specURI string) (ret SpecInfo, err error)
 
@@ -228,6 +231,13 @@ type GrantedAppKey struct {
 	Sk string `json:"sk"`
 }
 
+// GrantInfo 应用授权信息
+type GrantInfo struct {
+	Account   string    `json:"account"`
+	AppURI    string    `json:"appuri"`
+	CreatedAt time.Time `json:"ctime"`
+}
+
 // SpecInfo 包含 Spec 的相关信息
 type SpecInfo struct {
 	URI        string    `json:"uri"`
@@ -241,6 +251,7 @@ type SpecInfo struct {
 	Seedimg    string    `json:"seedimg"`
 	Entryport  uint16    `json:"entryport"`
 	Privileges []string  `json:"privileges"`
+	Regions    []string  `json:"regions"`
 	Ctime      time.Time `json:"ctime"`
 	Mtime      time.Time `json:"mtime"`
 }

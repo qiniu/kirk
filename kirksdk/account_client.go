@@ -149,6 +149,12 @@ func (p *accountClientImp) CreateAppGrant(ctx context.Context, appURI, username 
 	return
 }
 
+func (p *accountClientImp) ListGrants(ctx context.Context) (ret []GrantInfo, err error) {
+	url := fmt.Sprintf("%s%s/grants", p.host, appVersionPrefix)
+	err = p.client.Call(ctx, &ret, "GET", url)
+	return
+}
+
 func (p *accountClientImp) DeleteAppGrant(ctx context.Context, appURI, username string) (err error) {
 	url := fmt.Sprintf("%s%s/apps/%s/grants/%s", p.host, appVersionPrefix, appURI, username)
 	err = p.client.Call(ctx, nil, "DELETE", url)
