@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"golang.org/x/net/context"
@@ -95,9 +96,38 @@ func (p *accountClientImp) ListApps(ctx context.Context) (ret []AppInfo, err err
 	return
 }
 
-func (p *accountClientImp) GetAppQuota(ctx context.Context, appURI string) (ret map[string]string, err error) {
+func (p *accountClientImp) GetAppQuota(ctx context.Context, appURI string) (ret []QuotaItem, err error) {
+	quotaMap := make(map[string]string)
 	url := fmt.Sprintf("%s%s/apps/%s/quota", p.host, appVersionPrefix, appURI)
-	err = p.client.Call(ctx, &ret, "GET", url)
+	err = p.client.Call(ctx, &quotaMap, "GET", url)
+	if err != nil {
+		return
+	}
+
+	// parse quota items
+	for k, v := range quotaMap {
+		parts := strings.Split(v, "/")
+		if len(parts) < 2 {
+			continue
+		}
+
+		used, err := strconv.ParseInt(parts[0], 10, 0)
+		if err != nil {
+			return nil, ErrParseQuotaError
+		}
+		max, err := strconv.ParseInt(parts[1], 10, 0)
+		if err != nil {
+			return nil, ErrParseQuotaError
+		}
+
+		item := QuotaItem{
+			Name: k,
+			Used: used,
+			Max:  max,
+		}
+		ret = append(ret, item)
+	}
+
 	return
 }
 
