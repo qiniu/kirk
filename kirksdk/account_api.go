@@ -1,6 +1,7 @@
 package kirksdk
 
 import (
+	"errors"
 	"net/http"
 	"time"
 
@@ -28,6 +29,11 @@ const (
 	ProductAPI      = "api"
 	ProductVpnProxy = "vpnproxy"
 	ProductGates    = "gates"
+	UnlimitedQuota  = -1
+)
+
+var (
+	ErrParseQuotaError = errors.New("parse app quota error")
 )
 
 // AccountClient 包含针对账号 REST API 的各项操作
@@ -52,6 +58,9 @@ type AccountClient interface {
 
 	// ListApps 用于列出 Account 下的所有 App
 	ListApps(ctx context.Context) (ret []AppInfo, err error)
+
+	// GetAppQuota 用于获取 App 配额信息
+	GetAppQuota(ctx context.Context, appURI string) (ret []QuotaItem, err error)
 
 	// ListManagedApps 用于列出 Account 下的所有 VendorManaged App
 	ListManagedApps(ctx context.Context) (ret []AppInfo, err error)
@@ -183,6 +192,13 @@ type RegionInfo struct {
 	Name     string            `json:"name"`
 	Desc     string            `json:"desc"`
 	Products map[string]string `json:"products"`
+}
+
+// QuotaItem 配额项信息
+type QuotaItem struct {
+	Name string `json:"name"`
+	Used int64  `json:"used"`
+	Max  int64  `json:"max"`
 }
 
 // AlertMethods 代表若干个告警联系人
