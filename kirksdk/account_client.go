@@ -85,6 +85,12 @@ func (p *accountClientImp) ListApps(ctx context.Context) (ret []AppInfo, err err
 	return
 }
 
+func (p *accountClientImp) GetAppQuota(ctx context.Context, appURI string) (ret map[string]string, err error) {
+	url := fmt.Sprintf("%s%s/apps/%s/quota", p.host, appVersionPrefix, appURI)
+	err = p.client.Call(ctx, &ret, "GET", url)
+	return
+}
+
 func (p *accountClientImp) ListManagedApps(ctx context.Context) (ret []AppInfo, err error) {
 	url := fmt.Sprintf("%s%s/managed", p.host, appVersionPrefix)
 	err = p.client.Call(ctx, &ret, "GET", url)

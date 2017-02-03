@@ -51,6 +51,9 @@ type AccountClient interface {
 	// ListApps 用于列出 Account 下的所有 App
 	ListApps(ctx context.Context) (ret []AppInfo, err error)
 
+	// GetAppQuota 用于获取 App 配额信息
+	GetAppQuota(ctx context.Context, appURI string) (ret map[string]string, err error)
+
 	// ListManagedApps 用于列出 Account 下的所有 VendorManaged App
 	ListManagedApps(ctx context.Context) (ret []AppInfo, err error)
 
