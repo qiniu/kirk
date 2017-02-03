@@ -1,3 +1,3 @@
 package kirksdk
 
-const Version = "1.2.0"
+const Version = "2.3.0"
