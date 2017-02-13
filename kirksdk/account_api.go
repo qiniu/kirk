@@ -127,6 +127,15 @@ type AccountClient interface {
 
 	// VendorManagedAppRepair 尝试修复VendorManaged应用
 	VendorManagedAppRepair(ctx context.Context, appURI string) (err error)
+
+	// ListPreviewspecs 列出可申请应用的模板
+	ListPreviewspecs(ctx context.Context) (ret []SpecInfo, err error)
+
+	// ApplyAppSpec 发送应用模板申请
+	ApplyAppSpec(ctx context.Context, accontID uint32, specURI string) (ret AppSpecApply, err error)
+
+	// ListAppSpecApplies 列出某个用户所有的的应用模板申请
+	ListAppSpecApplies(ctx context.Context, accountID uint32) (ret []AppSpecApply, err error)
 }
 
 // AccountConfig 包含创建 AccountClient 所需的信息
@@ -263,6 +272,7 @@ type SpecInfo struct {
 	Verstr     string    `json:"verstr"`
 	Desc       string    `json:"desc,omitempty"`
 	Brief      string    `json:"brief"`
+	Agreement  string    `json:"agreement"`
 	Icon       string    `json:"icon"`
 	Seedimg    string    `json:"seedimg"`
 	Entryport  uint16    `json:"entryport"`
@@ -281,4 +291,20 @@ type VendorManagedAppStatus struct {
 // VendorManagedAppEntry 包含应用入口地址
 type VendorManagedAppEntry struct {
 	Entry string `json:"entry"`
+}
+
+// AppSpecApply 包含应用的模板申请信息
+type AppSpecApply struct {
+	ID           uint32    `json:"id"`
+	AccountID    uint32    `json:"accountId"`
+	SpecURI      string    `json:"specUri"`
+	Status       string    `json:"status"`
+	Reason       string    `json:"reason"`
+	CreationTime time.Time `json:"ctime"`
+	ReplyTime    time.Time `json:"rtime"`
+}
+
+// ApplyAppSpecArgs 包含发送应用模板申请需要的参数
+type ApplyAppSpecArgs struct {
+	AccountID string `json:"accountId"`
 }

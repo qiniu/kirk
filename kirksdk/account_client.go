@@ -251,6 +251,28 @@ func (p *accountClientImp) VendorManagedAppRepair(ctx context.Context, appURI st
 	return
 }
 
+func (p *accountClientImp) ListPreviewspecs(ctx context.Context) (ret []SpecInfo, err error) {
+	url := fmt.Sprintf("%s%s/previewspecs", p.host, appVersionPrefix)
+	err = p.client.Call(ctx, &ret, "GET", url)
+	return
+}
+
+func (p *accountClientImp) ApplyAppSpec(ctx context.Context, accountID uint32, specURI string) (ret AppSpecApply, err error) {
+	args := ApplyAppSpecArgs{
+		AccountID: fmt.Sprintf("%d", accountID),
+	}
+
+	url := fmt.Sprintf("%s%s/previewspecs/%s/apply", p.host, appVersionPrefix, specURI)
+	err = p.client.CallWithJson(ctx, &ret, "POST", url, args)
+	return
+}
+
+func (p *accountClientImp) ListAppSpecApplies(ctx context.Context, accountID uint32) (ret []AppSpecApply, err error) {
+	url := fmt.Sprintf("%s%s/appids/%d/apply/spec", p.host, appVersionPrefix, accountID)
+	err = p.client.Call(ctx, &ret, "GET", url)
+	return
+}
+
 func (p *accountClientImp) GetIndexClient(ctx context.Context) (client IndexClient, err error) {
 	accountInfo, err := p.GetAccountInfo(ctx)
 	if err != nil {
