@@ -132,7 +132,7 @@ type AccountClient interface {
 	ListPreviewspecs(ctx context.Context) (ret []SpecInfo, err error)
 
 	// ApplyAppSpec 发送应用模板申请
-	ApplyAppSpec(ctx context.Context, accontID uint32, specURI string) (ret AppSpecApply, err error)
+	ApplyAppSpec(ctx context.Context, specURI string, args ApplyAppSpecArgs) (ret AppSpecApply, err error)
 
 	// ListAppSpecApplies 列出某个用户所有的的应用模板申请
 	ListAppSpecApplies(ctx context.Context, accountID uint32) (ret []AppSpecApply, err error)
@@ -297,6 +297,8 @@ type VendorManagedAppEntry struct {
 type AppSpecApply struct {
 	ID           uint32    `json:"id"`
 	AccountID    uint32    `json:"accountId"`
+	Email        string    `json:"email"`
+	Username     string    `json:"username"`
 	SpecURI      string    `json:"specUri"`
 	Status       string    `json:"status"`
 	Reason       string    `json:"reason"`
@@ -307,4 +309,6 @@ type AppSpecApply struct {
 // ApplyAppSpecArgs 包含发送应用模板申请需要的参数
 type ApplyAppSpecArgs struct {
 	AccountID string `json:"accountId"`
+	Email     string `json:"email"`
+	Username  string `json:"username"`
 }

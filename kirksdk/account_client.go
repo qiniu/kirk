@@ -257,11 +257,7 @@ func (p *accountClientImp) ListPreviewspecs(ctx context.Context) (ret []SpecInfo
 	return
 }
 
-func (p *accountClientImp) ApplyAppSpec(ctx context.Context, accountID uint32, specURI string) (ret AppSpecApply, err error) {
-	args := ApplyAppSpecArgs{
-		AccountID: fmt.Sprintf("%d", accountID),
-	}
-
+func (p *accountClientImp) ApplyAppSpec(ctx context.Context, specURI string, args ApplyAppSpecArgs) (ret AppSpecApply, err error) {
 	url := fmt.Sprintf("%s%s/previewspecs/%s/apply", p.host, appVersionPrefix, specURI)
 	err = p.client.CallWithJson(ctx, &ret, "POST", url, args)
 	return
