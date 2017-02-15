@@ -1,6 +1,7 @@
 # vNext
 - 新增app配额查询接口
 - 新增 app spec 申请接口
+- CreateServiceVolume/SyncCreateServiceVolume 即将下线
 
 # Release 2.3.0
 - SpecInfo 添加 Regions 字段
