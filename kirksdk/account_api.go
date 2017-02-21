@@ -1,6 +1,7 @@
 package kirksdk
 
 import (
+	"errors"
 	"net/http"
 	"time"
 
@@ -28,6 +29,11 @@ const (
 	ProductAPI      = "api"
 	ProductVpnProxy = "vpnproxy"
 	ProductGates    = "gates"
+	UnlimitedQuota  = -1
+)
+
+var (
+	ErrParseQuotaError = errors.New("parse app quota error")
 )
 
 // AccountClient 包含针对账号 REST API 的各项操作
@@ -52,6 +58,9 @@ type AccountClient interface {
 
 	// ListApps 用于列出 Account 下的所有 App
 	ListApps(ctx context.Context) (ret []AppInfo, err error)
+
+	// GetAppQuota 用于获取 App 配额信息
+	GetAppQuota(ctx context.Context, appURI string) (ret []QuotaItem, err error)
 
 	// ListManagedApps 用于列出 Account 下的所有 VendorManaged App
 	ListManagedApps(ctx context.Context) (ret []AppInfo, err error)
@@ -118,6 +127,15 @@ type AccountClient interface {
 
 	// VendorManagedAppRepair 尝试修复VendorManaged应用
 	VendorManagedAppRepair(ctx context.Context, appURI string) (err error)
+
+	// ListPreviewspecs 列出可申请应用的模板
+	ListPreviewspecs(ctx context.Context) (ret []SpecInfo, err error)
+
+	// ApplyAppSpec 发送应用模板申请
+	ApplyAppSpec(ctx context.Context, specURI string, args ApplyAppSpecArgs) (ret AppSpecApply, err error)
+
+	// ListAppSpecApplies 列出某个用户所有的的应用模板申请
+	ListAppSpecApplies(ctx context.Context, accountID uint32) (ret []AppSpecApply, err error)
 }
 
 // AccountConfig 包含创建 AccountClient 所需的信息
@@ -185,6 +203,13 @@ type RegionInfo struct {
 	Products map[string]string `json:"products"`
 }
 
+// QuotaItem 配额项信息
+type QuotaItem struct {
+	Name string `json:"name"`
+	Used int64  `json:"used"`
+	Max  int64  `json:"max"`
+}
+
 // AlertMethods 代表若干个告警联系人
 type AlertMethods struct {
 	Methods []AlertMethodInfo `json:"methods"`
@@ -247,6 +272,7 @@ type SpecInfo struct {
 	Verstr     string    `json:"verstr"`
 	Desc       string    `json:"desc,omitempty"`
 	Brief      string    `json:"brief"`
+	Agreement  string    `json:"agreement"`
 	Icon       string    `json:"icon"`
 	Seedimg    string    `json:"seedimg"`
 	Entryport  uint16    `json:"entryport"`
@@ -265,4 +291,24 @@ type VendorManagedAppStatus struct {
 // VendorManagedAppEntry 包含应用入口地址
 type VendorManagedAppEntry struct {
 	Entry string `json:"entry"`
+}
+
+// AppSpecApply 包含应用的模板申请信息
+type AppSpecApply struct {
+	ID           uint32    `json:"id"`
+	AccountID    uint32    `json:"accountId"`
+	Email        string    `json:"email"`
+	Username     string    `json:"username"`
+	SpecURI      string    `json:"specUri"`
+	Status       string    `json:"status"`
+	Reason       string    `json:"reason"`
+	CreationTime time.Time `json:"ctime"`
+	ReplyTime    time.Time `json:"rtime"`
+}
+
+// ApplyAppSpecArgs 包含发送应用模板申请需要的参数
+type ApplyAppSpecArgs struct {
+	AccountID string `json:"accountId"`
+	Email     string `json:"email"`
+	Username  string `json:"username"`
 }
