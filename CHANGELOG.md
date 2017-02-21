@@ -1,4 +1,6 @@
 # vNext
+
+# Release 2.4.0
 - 新增app配额查询接口
 - 新增 app spec 申请接口
 - CreateServiceVolume/SyncCreateServiceVolume 即将下线
