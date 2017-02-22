@@ -668,6 +668,7 @@ type FullApInfo struct {
 	Provider    string    `json:"provider"`
 	Bandwidth   int       `json:"bandwidthMbps"`
 	Traffic     int       `json:"trafficBytes"`
+	Enabled     bool      `json:"enabled"`
 	UserDomains []string  `json:"userDomains,omitempty"`
 	Host        string    `json:"host,omitempty"`
 	UnitType    string    `json:"unitType,omitempty"`
