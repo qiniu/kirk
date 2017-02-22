@@ -1,4 +1,5 @@
 # vNext
+- AP详情添加enabled字段，表示这个AP是否已被管理员禁用
 
 # Release 2.4.0
 - 新增app配额查询接口
