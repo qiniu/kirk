@@ -81,7 +81,7 @@ func (p *qcosClientImp) ListStacks(ctx context.Context) (ret []StackInfo, err er
 }
 
 // POST /v3/stacks
-func (p *qcosClientImp) CreateStack(
+/*func (p *qcosClientImp) CreateStack(
 	ctx context.Context, args CreateStackArgs) (err error) {
 
 	url := fmt.Sprintf("%s/v3/stacks", p.host)
@@ -100,7 +100,7 @@ func (p *qcosClientImp) SyncCreateStack(
 		return
 	}
 	return
-}
+}*/
 
 // POST /v3/stacks/<stackName>
 func (p *qcosClientImp) UpdateStack(ctx context.Context, stackName string,
