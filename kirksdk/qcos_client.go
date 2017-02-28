@@ -81,7 +81,7 @@ func (p *qcosClientImp) ListStacks(ctx context.Context) (ret []StackInfo, err er
 }
 
 // POST /v3/stacks
-/*func (p *qcosClientImp) CreateStack(
+func (p *qcosClientImp) CreateStack(
 	ctx context.Context, args CreateStackArgs) (err error) {
 
 	url := fmt.Sprintf("%s/v3/stacks", p.host)
@@ -100,7 +100,7 @@ func (p *qcosClientImp) SyncCreateStack(
 		return
 	}
 	return
-}*/
+}
 
 // POST /v3/stacks/<stackName>
 func (p *qcosClientImp) UpdateStack(ctx context.Context, stackName string,
@@ -414,7 +414,7 @@ func (p *qcosClientImp) DeleteService(ctx context.Context, stackName string, ser
 }
 
 // POST /v3/stacks/<stackName>/services/<serviceName>/volumes
-func (p *qcosClientImp) CreateServiceVolume(ctx context.Context, stackName string,
+/*func (p *qcosClientImp) CreateServiceVolume(ctx context.Context, stackName string,
 	serviceName string, args CreateServiceVolumeArgs) (err error) {
 
 	if stackName == "" {
@@ -437,7 +437,7 @@ func (p *qcosClientImp) SyncCreateServiceVolume(ctx context.Context, stackName s
 		return
 	}
 	return
-}
+}*/
 
 // POST /v3/stacks/<stackName>/services/<serviceName>/volumes/<volumeName>/extend
 func (p *qcosClientImp) ExtendServiceVolume(ctx context.Context, stackName string,
