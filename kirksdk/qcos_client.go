@@ -414,7 +414,7 @@ func (p *qcosClientImp) DeleteService(ctx context.Context, stackName string, ser
 }
 
 // POST /v3/stacks/<stackName>/services/<serviceName>/volumes
-func (p *qcosClientImp) CreateServiceVolume(ctx context.Context, stackName string,
+/*func (p *qcosClientImp) CreateServiceVolume(ctx context.Context, stackName string,
 	serviceName string, args CreateServiceVolumeArgs) (err error) {
 
 	if stackName == "" {
@@ -437,7 +437,7 @@ func (p *qcosClientImp) SyncCreateServiceVolume(ctx context.Context, stackName s
 		return
 	}
 	return
-}
+}*/
 
 // POST /v3/stacks/<stackName>/services/<serviceName>/volumes/<volumeName>/extend
 func (p *qcosClientImp) ExtendServiceVolume(ctx context.Context, stackName string,

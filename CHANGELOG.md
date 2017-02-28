@@ -1,4 +1,5 @@
 # vNext
+- 下线CreateServiceVolume/SyncCreateServiceVolume接口
 
 # Release 2.4.0
 - 新增app配额查询接口
