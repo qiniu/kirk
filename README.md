@@ -1,13 +1,12 @@
-# QINIU KIRK
+# 简介
+本 SDK 基于 Golang 语言， 用于与 QINIU KIRK 通用计算服务（容器云）开放 API 的编程交互，提供了在开发者业务服务器（服务端或客户端）管理七牛容器云资源的能力。
+
 [![Qiniu Logo](http://open.qiniudn.com/logo.png)](http://qiniu.com/)
 
 | branch | usage | status |
 | --- | --- | --- |
 | master | (default) stable version| [![Build Status](https://travis-ci.org/qiniu/kirk.svg?branch=master)](https://travis-ci.org/qiniu/kirk) [![GoDoc](https://godoc.org/qiniupkg.com/kirk?status.svg)](https://godoc.org/qiniupkg.com/kirk) |
 | develop | develop version | [![Build Status](https://travis-ci.org/qiniu/kirk.svg?branch=develop)](https://travis-ci.org/qiniu/kirk) |
-
-# 简介
-本 SDK 基于 golang 语言， 用于与 QINIU KIRK 通用计算平台 REST API 的编程交互，提供了在开发者业务服务器（服务端或客户端）管理七牛容器云资源的能力。
 
 # 安装
 > 本 SDK 需要 [go 1.7](https://golang.org/dl/) 以上版本
@@ -20,11 +19,13 @@ $ go get -u qiniupkg.com/kirk/kirksdk
 ## 使用 [glide](https://glide.sh) 安装
 - 安装 [glide](https://glide.sh) 包管理工具
 - 在项目有中添加一个 import “qiniupkg.com/kirk/kirksdk” 的 .go 源文件，并执行如下命令。glide会自动扫描代码并下载需要的包
-```
+
+```bash
 $ cd your_project_dir
 $ glide init
 $ glide install
 ```
+
 # 示例
 ## 创建 App
 ```golang
@@ -97,7 +98,6 @@ for _, repo := range repos {
 }
 ```
 
-# 相关文档
+# 参考
 - [qiniupkg.com/kirk](https://godoc.org/qiniupkg.com/kirk)
-- [开放API和SDK文档](http://kirk-docs.qiniu.com/apidocs/?go)
-- [产品文档](http://kirk-docs.qiniu.com/)
+- [文档](https://developer.qiniu.com/kirk)
