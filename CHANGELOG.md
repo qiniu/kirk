@@ -1,5 +1,10 @@
 # vNext
 
+# Release 3.0.0
+- AP详情添加enabled字段，表示这个AP是否已被管理员禁用
+- 修复GetContainerLogsRealtime连接错误导致panic的bug
+- 下线CreateServiceVolume/SyncCreateServiceVolume接口
+
 # Release 2.4.0
 - 新增app配额查询接口
 - 新增 app spec 申请接口

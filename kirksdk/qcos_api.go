@@ -114,12 +114,12 @@ type QcosClient interface {
 	// POST /v3/stacks/<stackName>/services/<serviceName>/volumes
 	// Async
 	// Deprecated
-	CreateServiceVolume(ctx context.Context, stackName string,
-		serviceName string, args CreateServiceVolumeArgs) (err error)
+	//CreateServiceVolume(ctx context.Context, stackName string,
+	//serviceName string, args CreateServiceVolumeArgs) (err error)
 	// Sync
 	// Deprecated
-	SyncCreateServiceVolume(ctx context.Context, stackName string,
-		serviceName string, args CreateServiceVolumeArgs) (err error)
+	//SyncCreateServiceVolume(ctx context.Context, stackName string,
+	//serviceName string, args CreateServiceVolumeArgs) (err error)
 
 	// POST /v3/stacks/<stackName>/services/<serviceName>/volumes/<volumeName>/extend
 	// Async
@@ -668,6 +668,7 @@ type FullApInfo struct {
 	Provider    string    `json:"provider"`
 	Bandwidth   int       `json:"bandwidthMbps"`
 	Traffic     int       `json:"trafficBytes"`
+	Enabled     bool      `json:"enabled"`
 	UserDomains []string  `json:"userDomains,omitempty"`
 	Host        string    `json:"host,omitempty"`
 	UnitType    string    `json:"unitType,omitempty"`

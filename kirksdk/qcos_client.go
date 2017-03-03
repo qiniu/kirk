@@ -414,7 +414,7 @@ func (p *qcosClientImp) DeleteService(ctx context.Context, stackName string, ser
 }
 
 // POST /v3/stacks/<stackName>/services/<serviceName>/volumes
-func (p *qcosClientImp) CreateServiceVolume(ctx context.Context, stackName string,
+/*func (p *qcosClientImp) CreateServiceVolume(ctx context.Context, stackName string,
 	serviceName string, args CreateServiceVolumeArgs) (err error) {
 
 	if stackName == "" {
@@ -437,7 +437,7 @@ func (p *qcosClientImp) SyncCreateServiceVolume(ctx context.Context, stackName s
 		return
 	}
 	return
-}
+}*/
 
 // POST /v3/stacks/<stackName>/services/<serviceName>/volumes/<volumeName>/extend
 func (p *qcosClientImp) ExtendServiceVolume(ctx context.Context, stackName string,
@@ -881,14 +881,18 @@ func (p *qcosClientImp) GetContainerLogsRealtime(ctx context.Context, ip, since,
 	if !isSSL {
 		conn, err = net.DialTimeout("tcp", host, 10*time.Second)
 		if err != nil {
-			conn.Close()
+			if conn != nil {
+				conn.Close()
+			}
 			err = fmt.Errorf("net.DialTimeout err: %v", err)
 			return
 		}
 	} else {
 		conn, err = tls.DialWithDialer(&net.Dialer{Timeout: 10 * time.Second}, "tcp", host, nil)
 		if err != nil {
-			conn.Close()
+			if conn != nil {
+				conn.Close()
+			}
 			err = fmt.Errorf("tls.DialWithDialer err: %v", err)
 			return
 		}
