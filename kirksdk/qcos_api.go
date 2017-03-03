@@ -114,12 +114,12 @@ type QcosClient interface {
 	// POST /v3/stacks/<stackName>/services/<serviceName>/volumes
 	// Async
 	// Deprecated
-	CreateServiceVolume(ctx context.Context, stackName string,
-		serviceName string, args CreateServiceVolumeArgs) (err error)
+	//CreateServiceVolume(ctx context.Context, stackName string,
+	//serviceName string, args CreateServiceVolumeArgs) (err error)
 	// Sync
 	// Deprecated
-	SyncCreateServiceVolume(ctx context.Context, stackName string,
-		serviceName string, args CreateServiceVolumeArgs) (err error)
+	//SyncCreateServiceVolume(ctx context.Context, stackName string,
+	//serviceName string, args CreateServiceVolumeArgs) (err error)
 
 	// POST /v3/stacks/<stackName>/services/<serviceName>/volumes/<volumeName>/extend
 	// Async
