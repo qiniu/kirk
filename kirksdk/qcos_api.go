@@ -673,6 +673,7 @@ type FullApInfo struct {
 	UnitType    string    `json:"unitType,omitempty"`
 	CreatedAt   time.Time `json:"createdAt"`
 	UpdatedAt   time.Time `json:"updatedAt"`
+	Enabled     bool      `json:"enabled"`
 	// domain auth
 	RequireAuth  string       `json:"requireAuth,omitempty"`
 	UIDWhiteList []string     `json:"uidWhiteList,omitempty"`
