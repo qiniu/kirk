@@ -1,6 +1,8 @@
 # vNext
 
+
 # Release 2.4.0
+- AP详情添加enabled字段，表示这个AP是否已被管理员禁用
 - 新增app配额查询接口
 - 新增 app spec 申请接口
 - CreateServiceVolume/SyncCreateServiceVolume 即将下线
