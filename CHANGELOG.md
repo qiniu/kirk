@@ -1,5 +1,8 @@
 # vNext
 
+# Release 3.0.1
+- 新增 CongigService 渲染容器配置模板失败时，容器错误信息
+
 # Release 3.0.0
 - AP详情添加enabled字段，表示这个AP是否已被管理员禁用
 - 修复GetContainerLogsRealtime连接错误导致panic的bug
