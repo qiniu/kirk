@@ -1,4 +1,6 @@
 # vNext
+
+# Release 3.0.1
 - 新增 CongigService 渲染容器配置模板失败时，容器错误信息
 
 # Release 3.0.0
