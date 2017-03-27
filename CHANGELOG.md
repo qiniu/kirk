@@ -1,4 +1,5 @@
 # vNext
+- 新增app配额查询接口
 
 # Release 3.0.1
 - 新增 CongigService 渲染容器配置模板失败时，容器错误信息
