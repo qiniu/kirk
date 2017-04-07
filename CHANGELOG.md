@@ -1,6 +1,7 @@
 # vNext
 - 修复GetContainerLogsRealtime连接错误导致panic的bug
 - 下线CreateServiceVolume/SyncCreateServiceVolume接口
+- 添加ListEvents支持列举指定条件下的操作日志
 
 # Release 2.4.0
 - 新增app配额查询接口
