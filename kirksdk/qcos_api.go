@@ -754,8 +754,9 @@ type SearchContainerLogsArgs struct {
 }
 
 type LogsSearchResult struct {
-	Total int   `json:"total"`
-	Data  []Hit `json:"data"`
+	Total          int   `json:"total"`
+	PartialSuccess bool  `json:"partialSuccess"`
+	Data           []Hit `json:"data"`
 }
 
 type Hit struct {
