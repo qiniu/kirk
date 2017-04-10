@@ -981,6 +981,10 @@ func (p *qcosClientImp) SearchContainerLogs(ctx context.Context, args SearchCont
 	}
 
 	err = p.client.Call(ctx, &res, "GET", queryURL)
+	if err != nil && strings.Contains(err.Error(), "E8111") {
+		err = nil
+		res = LogsSearchResult{}
+	}
 	return
 }
 
@@ -1014,7 +1018,6 @@ func (p *qcosClientImp) ListEvents(ctx context.Context, args ListEventsArgs) (re
 		queryURL += "?" + strings.Join(params, "&")
 	}
 
-	err = p.client.Call(ctx, &res, "GET", queryURL)
 	return
 }
 
