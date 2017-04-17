@@ -201,6 +201,9 @@ type QcosClient interface {
 	// GET /v3/logs/search/<repoType>?q=<query>&from=<from>&size=<size>&sort=<sort>
 	SearchContainerLogs(ctx context.Context, args SearchContainerLogsArgs) (res LogsSearchResult, err error)
 
+	// GET /v3/events?from=<from>&to=<to>&eid=<eid>&type=<type>&action=<action>&trigger=<trigger>&triggerAppid=<triggerAppid>
+	ListEvents(ctx context.Context, args ListEventsArgs) (res ListEventsResult, err error)
+
 	// AP(Access Point) APIs
 
 	// GET /v3/aps | /v3/aps?stack=<stack> | GET /v3/aps?service=<service>
@@ -752,8 +755,9 @@ type SearchContainerLogsArgs struct {
 }
 
 type LogsSearchResult struct {
-	Total int   `json:"total"`
-	Data  []Hit `json:"data"`
+	Total          int   `json:"total"`
+	PartialSuccess bool  `json:"partialSuccess"`
+	Data           []Hit `json:"data"`
 }
 
 type Hit struct {
@@ -789,6 +793,40 @@ type Hit struct {
 	RequestBody    string    `json:"requestBody" repo:"access"`
 	ResponseHeader string    `json:"responseHeader" repo:"access"`
 	ResponseBody   string    `json:"responseBody" repo:"access"`
+}
+
+type ListEventsArgs struct {
+	From         int64  `json:"from"`
+	To           int64  `json:"to"`
+	Eid          string `json:"eid"`
+	Type         string `json:"type"`
+	Action       string `json:"action"`
+	Trigger      string `json:"trigger"`
+	TriggerAppid string `json:"triggerAppid"`
+}
+
+type ListEventsResult struct {
+	Total  int     `json:"total"`
+	Events []Event `json:"events"`
+}
+
+type Event struct {
+	Eid          string `json:"eid"`
+	Parent       string `json:"parent"`
+	Service      string `json:"service"`
+	Hostname     string `json:"hostname"`
+	Timestamp    int64  `json:"timestamp"` // in ns
+	Duration     int64  `json:"duration"`  // in ns
+	Appid        string `json:"appid"`
+	EventType    string `json:"type"`
+	Action       string `json:"action"`
+	Phase        string `json:"phase"`
+	Trigger      string `json:"trigger"`
+	TriggerAppid string `json:"triggerAppid"`
+	Note         string `json:"note"`
+
+	TS string `json:"tsanno"`
+	KV string `json:"kvanno"`
 }
 
 var (

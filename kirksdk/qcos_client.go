@@ -981,6 +981,43 @@ func (p *qcosClientImp) SearchContainerLogs(ctx context.Context, args SearchCont
 	}
 
 	err = p.client.Call(ctx, &res, "GET", queryURL)
+	if err != nil && strings.Contains(err.Error(), "E8111") {
+		err = nil
+		res = LogsSearchResult{}
+	}
+	return
+}
+
+// GET /v3/events?from=<from>&to=<to>&eid=<eid>&type=<type>&action=<action>&trigger=<trigger>&triggerAppid=<triggerAppid>
+func (p *qcosClientImp) ListEvents(ctx context.Context, args ListEventsArgs) (res ListEventsResult, err error) {
+
+	queryURL := fmt.Sprintf("%s/v3/events", p.host)
+	params := make([]string, 0)
+	if args.From != 0 {
+		params = append(params, fmt.Sprintf("from=%d", args.From))
+	}
+	if args.To != 0 {
+		params = append(params, fmt.Sprintf("to=%d", args.To))
+	}
+	if args.Eid != "" {
+		params = append(params, fmt.Sprintf("eid=%s", args.Eid))
+	}
+	if args.Type != "" {
+		params = append(params, fmt.Sprintf("type=%s", args.Type))
+	}
+	if args.Action != "" {
+		params = append(params, fmt.Sprintf("action=%s", args.Action))
+	}
+	if args.Trigger != "" {
+		params = append(params, fmt.Sprintf("trigger=%s", args.Trigger))
+	}
+	if args.TriggerAppid != "" {
+		params = append(params, fmt.Sprintf("triggerAppid=%s", args.TriggerAppid))
+	}
+	if len(params) > 0 {
+		queryURL += "?" + strings.Join(params, "&")
+	}
+
 	return
 }
 
