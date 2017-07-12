@@ -128,6 +128,9 @@ type AccountClient interface {
 	// VendorManagedAppRepair 尝试修复VendorManaged应用
 	VendorManagedAppRepair(ctx context.Context, appURI string) (err error)
 
+	// VendorManagedAppReloadSeed 尝试重启VendorManaged应用的seed容器，重新载入环境变量
+	VendorManagedAppReloadSeed(ctx context.Context, appURI string) (err error)
+
 	// ListPreviewspecs 列出可申请应用的模板
 	ListPreviewspecs(ctx context.Context) (ret []SpecInfo, err error)
 
