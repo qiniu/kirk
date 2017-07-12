@@ -2,6 +2,7 @@
 - 添加ListEvents支持列举指定条件下的操作日志
 - 日志搜索返回数据结构添加PartialSuccess字段
 - 日志搜索sdk当repo不存在时不返回错误
+- 重启seed容器，重新载入环境变量接口
 
 # Release 3.0.1
 - 新增 CongigService 渲染容器配置模板失败时，容器错误信息

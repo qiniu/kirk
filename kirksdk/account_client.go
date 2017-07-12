@@ -251,6 +251,12 @@ func (p *accountClientImp) VendorManagedAppRepair(ctx context.Context, appURI st
 	return
 }
 
+func (p *accountClientImp) VendorManagedAppReloadSeed(ctx context.Context, appURI string) (err error) {
+	url := fmt.Sprintf("%s%s/apps/%s/reloadseed", p.host, appVersionPrefix, appURI)
+	err = p.client.Call(ctx, nil, "PUT", url)
+	return
+}
+
 func (p *accountClientImp) ListPreviewspecs(ctx context.Context) (ret []SpecInfo, err error) {
 	url := fmt.Sprintf("%s%s/previewspecs", p.host, appVersionPrefix)
 	err = p.client.Call(ctx, &ret, "GET", url)
