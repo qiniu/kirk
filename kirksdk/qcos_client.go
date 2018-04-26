@@ -16,7 +16,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 	"qiniupkg.com/kirk/kirksdk/mac"
 	"qiniupkg.com/x/rpc.v7"
