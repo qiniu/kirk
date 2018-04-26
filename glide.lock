@@ -11,6 +11,8 @@ imports:
   version: 8d1157a435470616f975ff9bb013bea8d0962067
   subpackages:
   - unix
+- name: golang.org/x/crypto/ssh/terminal
+  version: b176d7def5d71bdd214203491f89843ed217f420
 - name: qiniupkg.com/api.v7
   version: e4122ada30952518d4745bb9f8dd87bef65a498f
   subpackages:

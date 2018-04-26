@@ -4,9 +4,10 @@ license: MIT
 import:
 - package: github.com/sirupsen/logrus
   version: ~0.10.0
-- package: golang.org/x/net
+- package: golang.org/x
   subpackages:
-  - context
+  - net/context
+  - crypto/ssh/terminal
 - package: qiniupkg.com/api.v7
   version: ^7.0.5
   subpackages:
