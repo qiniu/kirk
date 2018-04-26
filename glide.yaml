@@ -2,7 +2,7 @@ package: qiniupkg.com/kirk
 homepage: https://qiniu.com
 license: MIT
 import:
-- package: github.com/Sirupsen/logrus
+- package: github.com/sirupsen/logrus
   version: ~0.10.0
 - package: golang.org/x/net
   subpackages:
